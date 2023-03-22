@@ -1,8 +1,6 @@
-from fastapi import FastAPI
+from app import create_app
 
-app = FastAPI()
+app = create_app()
 
-
-@app.get("/")
-async def root():
-    return {"message": "Hello World"}
+if __name__ == "__main__":
+    app.run(port=8999, host="0.0.0.0")

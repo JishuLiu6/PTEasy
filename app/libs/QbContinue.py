@@ -1,7 +1,7 @@
 import os
-from lib.XLog import XLog
-from lib.XQBittorrent import XQBittorrentApi
-from lib.XTorrent import XTorrent
+from libs.XLog import XLog
+from libs.XQBittorrent import XQBittorrentApi
+from libs.XTorrent import XTorrent
 
 
 # 递归获取所有文件
