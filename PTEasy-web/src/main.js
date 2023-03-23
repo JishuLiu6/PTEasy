@@ -1,4 +1,5 @@
 import { createApp } from 'vue'
+import { createStore } from 'vuex'
 import App from './App.vue'
 
 // 导入element-plus
@@ -10,9 +11,15 @@ import 'normalize.css/normalize.css'
 import {router} from './router'
 // 导入图片方法
 import {imgUrl} from './utils/imgUrl'
+// store
+import fm from './store';
 
 const app = createApp(App)
+const store = createStore({
+    modules: { fm },
+});
 app.use(router)
+app.use(store)
 app.use(ElementPlus)
 app.config.globalProperties.$imgUrl = imgUrl
 app.mount('#app')
