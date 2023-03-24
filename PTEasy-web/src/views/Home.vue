@@ -1,77 +1,53 @@
 <template>
   <div id="home">
     <div id="server-list">
-      <div class="server-list-item">
-        <el-image :src="$imgUrl('pteasy_logo.png')" class="server-list-img"></el-image>
-        <div class="server-list-item-info">
-          <div class="connect-icon"></div>
-          <span>PtEasy</span>
+      <div id="server-list-left" style="display: flex;align-items: center;">
+        <p style="color:white;writing-mode: vertical-lr;text-align: center;">本机</p>
+        <div class="server-list-item">
+          <el-image :src="$imgUrl('pteasy_logo.png')" class="server-list-img"></el-image>
+          <div class="server-list-item-info">
+            <div class="connect-icon"></div>
+            <span>PtEasy</span>
+          </div>
         </div>
       </div>
-      <div class="server-list-item">
-        <el-image :src="$imgUrl('qb.jpeg')" class="server-list-img"></el-image>
-        <div class="server-list-item-info">
-          <div class="connect-icon"></div>
-          <span>下载:1</span>
-          <span>保种:100</span>
+      <div id="server-list-left" style="display: flex;align-items: center;">
+        <p style="color:white;writing-mode: vertical-lr;text-align: center;">NAS</p>
+        <div class="server-list-item">
+          <el-image :src="$imgUrl('dsm.png')" class="server-list-img"></el-image>
+          <div class="server-list-item-info">
+            <div class="connect-icon"></div>
+            <span>192.168.195.100</span>
+          </div>
         </div>
       </div>
-      <div class="server-list-item">
-        <el-image :src="$imgUrl('utorrent.jpeg')" class="server-list-img"></el-image>
-        <div class="server-list-item-info">
-          <div class="connect-icon"></div>
-          <span>下载:1</span>
-          <span>保种:100</span>
+      <div id="server-list-right" style="display: flex;">
+        <p style="color:white;writing-mode: vertical-lr;text-align: center;">下载器</p>
+        <div class="server-list-item">
+          <el-image :src="$imgUrl('qb.jpeg')" class="server-list-img"></el-image>
+          <div class="server-list-item-info">
+            <div class="connect-icon"></div>
+            <span>下载:1</span>
+            <span>保种:100</span>
+          </div>
+        </div>
+        <div class="server-list-item">
+          <el-image :src="$imgUrl('utorrent.jpeg')" class="server-list-img"></el-image>
+          <div class="server-list-item-info">
+            <div class="connect-icon"></div>
+            <span>下载:1</span>
+            <span>保种:100</span>
+          </div>
         </div>
       </div>
     </div>
     <div id="home-content">
-      <el-tabs type="border-card">
-        <el-tab-pane label="种子资源匹配">
-          <el-table id="torrent-table" :data="torrentData" border stripe>
-            <el-table-column type="expand">
-              <template #default="props">
-                <div>
-                  <el-table :data="props.row.save_file_list" border stripe>
-                    <el-table-column fixed="left" label="资源路径" prop="file_path"/>
-                    <el-table-column label="大小" prop="size"/>
-                    <el-table-column label="保种">
-                      <template #default="props">
-                        <el-tag type="success">{{ props.row.file_state.seed }}</el-tag>
-                      </template>
-                    </el-table-column>
-                    <el-table-column fixed="right" label="操作" style="text-align: right">
-                      <template #default="props">
-                        <el-button type="danger" size="small">删除</el-button>
-                      </template>
-                    </el-table-column>
-                  </el-table>
-                </div>
-              </template>
-            </el-table-column>
-            <el-table-column label="种子文件夹" prop="torrent_path"/>
-            <el-table-column label="保种/种子">
-              <template #default="props">
-                <el-tag type="success">{{ props.row.torrent_state.seed }}</el-tag>
-                /
-                <el-tag type="warning">{{ props.row.torrent_state.torrent }}</el-tag>
-              </template>
-            </el-table-column>
-            <el-table-column align="right">
-              <template #header>
-                <el-button type="primary">添加种子文件夹</el-button>
-              </template>
-              <template #default="scope">
-                <el-button size="small">编辑</el-button>
-                <el-button size="small" type="danger">删除</el-button>
-              </template>
-            </el-table-column>
-          </el-table>
-        </el-tab-pane>
+      <el-tabs type="border-card" tabPosition="left">
         <el-tab-pane label="下载资源汇总">
-          <el-table id="resource-table" border stripe>
-
-          </el-table>
+          <EasyDataTable :headers="resourceHeaders" :items="resourceData" alternating border-cell buttons-pagination />
+        </el-tab-pane>
+        <el-tab-pane label="种子资源匹配">
+          <EasyDataTable :headers="torrentHeaders" :items="torrentData" alternating border-cell buttons-pagination />
         </el-tab-pane>
       </el-tabs>
 
@@ -79,17 +55,48 @@
   </div>
 </template>
 
-<script setup>
-import {getCurrentInstance} from 'vue'
+<script lang="ts" setup>
+import type { Header, Item } from "vue3-easy-data-table";
+import { getCurrentInstance } from 'vue'
+const { proxy } = getCurrentInstance();
+const { $imgUrl } = proxy;
 
-const {proxy} = getCurrentInstance();
-const {$imgUrl} = proxy;
+const torrentHeaders: Header[] = [
+  { text: "种子路径", value: "torrent_path" },
+  { text: "做种数", value: "torrent_state.save" },
+  { text: "种子数", value: "torrent_state.save" },
+]
 
-const torrentData = [
+const torrentData: Item[] = [
   {
     torrent_path: 'E:\\',
     torrent_state: {
-      seed: 2,
+      save: 1,
+      torrent: 2,
+    },
+    save_file_list: [
+      {
+        file_path: 'F:\\stata',
+        file_state: {
+          seed: 1,
+          torrent: 1,
+        },
+        size: '100M'
+      },
+      {
+        file_path: 'D:\\QQQ',
+        file_state: {
+          seed: 1,
+          torrent: 1,
+        },
+        size: "200M"
+      },
+    ],
+  },
+  {
+    torrent_path: 'E:\\',
+    torrent_state: {
+      save: 1,
       torrent: 2,
     },
     save_file_list: [
@@ -112,16 +119,55 @@ const torrentData = [
     ],
   }
 ]
-
+const resourceHeaders: Header[] = [
+  { text: "资源名称", value: "name" },
+  { text: "资源类型", value: "type" },
+  { text: "资源大小", value: "size" },
+  { text: "保种路径", value: "save_path" },
+  { text: "压制组", value: "yazigroup" },
+  { text: "保种软件", value: "save_software" },
+]
 const resourceData = [
   {
-    file_path: 'F:\\stata',
-    file_state: {
-      seed: 1,
-      torrent: 1,
-    },
-    size: '100M'
-  }
+    name: '苏有朋版倚天屠龙记.40集全.2003.简繁中字￡CMCT暮雨潇潇',
+    type: '视频',
+    size: '100M',
+    save_path: 'F:\\state\mjtt',
+    yazigroup: 'CMCT',
+    save_software: 'qb',
+  },
+  {
+    name: '苏有朋版倚天屠龙记.40集全.2003.简繁中字￡CMCT暮雨潇潇',
+    type: '视频',
+    size: '100M',
+    save_path: 'F:\\state\mjtt',
+    yazigroup: 'CMCT',
+    save_software: 'qb',
+  },
+  {
+    name: '苏有朋版倚天屠龙记.40集全.2003.简繁中字￡CMCT暮雨潇潇',
+    type: '视频',
+    size: '100M',
+    save_path: 'F:\\state\mjtt',
+    yazigroup: 'CMCT',
+    save_software: 'qb',
+  },
+  {
+    name: '苏有朋版倚天屠龙记.40集全.2003.简繁中字￡CMCT暮雨潇潇',
+    type: '视频',
+    size: '100M',
+    save_path: 'F:\\state\mjtt',
+    yazigroup: 'CMCT',
+    save_software: 'qb',
+  },
+  {
+    name: '苏有朋版倚天屠龙记.40集全.2003.简繁中字￡CMCT暮雨潇潇',
+    type: '视频',
+    size: '100M',
+    save_path: 'F:\\state\mjtt',
+    yazigroup: 'CMCT',
+    save_software: 'qb',
+  },
 ]
 </script>
 <style scoped>
@@ -163,19 +209,26 @@ const resourceData = [
   background: #2065ac;
 }
 
-.server-list-item-info > span {
+.server-list-item-info>span {
   margin-right: 3px;
   opacity: .5;
 }
 
-.server-list-item-info > span:hover {
+.server-list-item-info>span:hover {
   opacity: 1;
 }
 
 .server-list-img {
   width: 100px;
   height: 100px;
+  border: 1px dashed #989898;
+  padding: 5px;
 }
+
+.server-list-img:hover {
+  background-color: white;
+}
+
 
 #home {
   width: 1160px;

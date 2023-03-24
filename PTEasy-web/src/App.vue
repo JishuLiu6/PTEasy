@@ -2,9 +2,9 @@
   <div id="app-view">
     <div id="app-view-router">
       <router-link to="/">PtEasy</router-link>
-      <!-- <router-link to="/">种子管理</router-link> -->
-      <!-- <router-link to="/about">统计分析</router-link> -->
-      <router-link to="/about">添加服务器</router-link>
+      <router-link to="/about">添加NAS</router-link>
+      <router-link to="/about">添加下载器</router-link>
+      <router-link to="/about">保种备份</router-link>
     </div>
     <router-view />
   </div>

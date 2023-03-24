@@ -5,6 +5,8 @@ services:
     container_name: pt_easy_server
     restart: always
     build: ./PTEasy-backend
+    depends_on:
+      - mongodb_server
     ports:
       - "8999:8999"
     command: gunicorn main:app --bind 0.0.0.0:8999 --access-logfile -
@@ -20,24 +22,17 @@ services:
   mongodb_server:
     image: mongo:latest
     container_name: mongodb-container
-    command: [--auth]
     environment:
       # 时区上海
       TZ: Asia/Shanghai
       MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: root
+      MONGO_INITDB_ROOT_PASSWORD: qwertyuiop
       MONGO_INITDB_DATABASE: pt_easy
-      MONGO_USERNAME: root
-      MONGO_PASSWORD: qwertyuiop
     restart: always
     volumes:
         - ./mongo/data/db:/data/db
         - ./mongo/mongo-init.sh:/docker-entrypoint-initdb.d/mongo-init.sh
     ports:
-      - 27017:27017
-    # network_mode: host
-    # networks:
-    #   kafka_net:
-    #     ipv4_address: 172.27.10.2
+      - "27017:27017"
 
 

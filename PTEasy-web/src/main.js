@@ -11,15 +11,13 @@ import 'normalize.css/normalize.css'
 import {router} from './router'
 // 导入图片方法
 import {imgUrl} from './utils/imgUrl'
-// store
-import fm from './store';
+// 导入表格
+import Vue3EasyDataTable from 'vue3-easy-data-table';
+import 'vue3-easy-data-table/dist/style.css';
 
 const app = createApp(App)
-const store = createStore({
-    modules: { fm },
-});
 app.use(router)
-app.use(store)
+app.component('EasyDataTable', Vue3EasyDataTable);
 app.use(ElementPlus)
 app.config.globalProperties.$imgUrl = imgUrl
 app.mount('#app')
