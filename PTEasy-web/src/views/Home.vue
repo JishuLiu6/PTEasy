@@ -3,7 +3,7 @@
     <div id="server-list">
       <div id="server-list-left" style="display: flex;align-items: center;">
         <p style="color:white;writing-mode: vertical-lr;text-align: center;">本机</p>
-        <div class="server-list-item">
+        <div class="server-list-item server-list-item-active">
           <el-image :src="$imgUrl('pteasy_logo.png')" class="server-list-img"></el-image>
           <div class="server-list-item-info">
             <div class="connect-icon"></div>
@@ -12,7 +12,7 @@
         </div>
       </div>
       <div id="server-list-left" style="display: flex;align-items: center;">
-        <p style="color:white;writing-mode: vertical-lr;text-align: center;">NAS</p>
+        <p style="color:white;writing-mode: vertical-lr;text-align: center;">存储设备</p>
         <div class="server-list-item">
           <el-image :src="$imgUrl('dsm.png')" class="server-list-img"></el-image>
           <div class="server-list-item-info">
@@ -22,7 +22,7 @@
         </div>
       </div>
       <div id="server-list-right" style="display: flex;">
-        <p style="color:white;writing-mode: vertical-lr;text-align: center;">下载器</p>
+        <p style="color:white;writing-mode: vertical-lr;text-align: center;">下载软件</p>
         <div class="server-list-item">
           <el-image :src="$imgUrl('qb.jpeg')" class="server-list-img"></el-image>
           <div class="server-list-item-info">
@@ -42,7 +42,7 @@
       </div>
     </div>
     <div id="home-content">
-      <el-tabs type="border-card" tabPosition="left">
+      <el-tabs type="border-card" tabPosition="left" style="height: 450px">
         <el-tab-pane label="下载资源汇总">
           <EasyDataTable :headers="resourceHeaders" :items="resourceData" alternating border-cell buttons-pagination />
         </el-tab-pane>
@@ -184,6 +184,17 @@ const resourceData = [
   margin-right: 50px;
 }
 
+
+.server-list-item-active:after {
+    content: "";
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 0 20px 20px;
+    border-color: transparent transparent white;
+    top:208px;
+}
 .connect-icon {
   width: 10px;
   height: 10px;
@@ -238,10 +249,10 @@ const resourceData = [
 #home-content {
   width: 1160px;
   height: 60vh;
-  /*background: #fff;*/
+  background: #fff;
   border-radius: 10px;
-  margin-top: 20px;
-  padding-top: 20px;
+  padding: 20px;
+  margin-top: 5px;
 }
 
 #torrent-table {

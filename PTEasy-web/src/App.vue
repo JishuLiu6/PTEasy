@@ -1,9 +1,10 @@
 <template>
   <div id="app-view">
     <div id="app-view-router">
-      <router-link to="/">PtEasy</router-link>
-      <router-link to="/about">添加NAS</router-link>
-      <router-link to="/about">添加下载器</router-link>
+      <span style="color:white;font-size:36px;margin-right: 40px;cursor:default;user-select: none;">PtEasy</span>
+      <router-link to="/about">压制组设置</router-link>
+      <router-link to="/about">添加存储设备</router-link>
+      <router-link to="/about">添加下载软件</router-link>
       <router-link to="/about">保种备份</router-link>
     </div>
     <router-view />

@@ -199,10 +199,8 @@ const resourceData = [
 #home-content {
   width: 1160px;
   height: 60vh;
-  /*background: #fff;*/
+  background: white;
   border-radius: 10px;
-  margin-top: 20px;
-  padding-top: 20px;
 }
 
 #torrent-table {
