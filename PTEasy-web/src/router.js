@@ -2,10 +2,19 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 const routes = [
     {
+        path: '/',
         name: 'home',
         component: () => import('./views/Home.vue'),
         meta: {
             title: '首页'
+        }
+    },
+    {
+        path: '/nas',
+        name: 'nas',
+        component: () => import('./views/Nas.vue'),
+        meta: {
+            title: 'NAS'
         }
     }
 ]
