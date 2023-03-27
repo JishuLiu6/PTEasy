@@ -1,14 +1,8 @@
-# coding:utf-8
-from flask import Blueprint, render_template
-from app.api import local
+from flask import Blueprint
+from app.api.v1 import local
 
 
-def create_blueprint_pt_easy():
-    bp = Blueprint('v1', __name__, static_folder='../templates')
-
-    @bp.route("/")
-    def confirm():
-        return render_template("index.html")
-
+def create_blueprint_v1():
+    bp = Blueprint('v1', __name__, url_prefix='/v1')
     local.redprint.register(bp)
     return bp

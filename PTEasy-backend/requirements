@@ -9,8 +9,6 @@ idna==3.4
 itsdangerous==2.1.2
 Jinja2==3.1.2
 MarkupSafe==2.1.2
-mongoengine==0.23.1
-pymongo==3.13.0
 qbittorrent-api==2023.3.44
 requests==2.28.2
 six==1.16.0

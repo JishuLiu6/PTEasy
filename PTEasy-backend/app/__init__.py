@@ -1,11 +1,14 @@
+from flask import Flask
 from flask_failsafe import failsafe
 from flask_cors import *
-from .app import Flask
+
+from app.api import pc_bp
+from app.api.v1 import create_blueprint_v1
 
 
 def register_blueprints(app):
-    from app.views import create_blueprint_pt_easy
-    app.register_blueprint(create_blueprint_pt_easy())
+    app.register_blueprint(pc_bp)
+    app.register_blueprint(create_blueprint_v1())
 
 
 @failsafe

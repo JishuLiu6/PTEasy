@@ -2,9 +2,8 @@ from qbittorrentapi import Client
 
 
 class XQBittorrentApi:
-    def __init__(self, host, username, password, tag_name):
+    def __init__(self, host, username, password):
         self.client = Client(host=host, username=username, password=password)
-        self.tag_name = tag_name
 
     def torrents_list(self) -> None:
         for torrent in self.client.torrents_info():
@@ -18,9 +17,8 @@ class XQBittorrentApi:
             }
             yield data
 
-
-    def add_tag_to_torrent(self, torrent_hash, **kwargs):
-        self.client.torrents_addTags(tags=self.tag_name, torrent_hashes=torrent_hash, **kwargs)
+    def add_tag_to_torrent(self, torrent_hash, tag_name,  **kwargs):
+        self.client.torrents_addTags(tags=tag_name, torrent_hashes=torrent_hash, **kwargs)
 
     def add_torrent_to_run(self, torrent_path, **kwargs):
         self.client.torrents_add(torrent_files=open(torrent_path, 'rb'), **kwargs)

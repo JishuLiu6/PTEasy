@@ -5,34 +5,7 @@ services:
     container_name: pt_easy_server
     restart: always
     build: ./PTEasy-backend
-    depends_on:
-      - mongodb_server
     ports:
       - "8999:8999"
     command: gunicorn main:app --bind 0.0.0.0:8999 --access-logfile -
-
-  nginx:
-    container_name: nginx
-    restart: always
-    build: ./nginx
-    ports:
-      - "80:80"
-      - "443:443"
-
-  mongodb_server:
-    image: mongo:latest
-    container_name: mongodb-container
-    environment:
-      # 时区上海
-      TZ: Asia/Shanghai
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: qwertyuiop
-      MONGO_INITDB_DATABASE: pt_easy
-    restart: always
-    volumes:
-        - ./mongo/data/db:/data/db
-        - ./mongo/mongo-init.sh:/docker-entrypoint-initdb.d/mongo-init.sh
-    ports:
-      - "27017:27017"
-
 
