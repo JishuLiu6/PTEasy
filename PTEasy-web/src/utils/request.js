@@ -12,7 +12,6 @@ const ERR_OK = 0
 const NOT_AUTH = 4
 
 const service = axios.create({
-  baseURL: 'http://127.0.0.1:9900', // api 的 VUE_APP_URL
   timeout: 10000 // 请求超时时间(因为需要调试后台,所以设置得比较大)
 })
 

@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 const routes = [
     {
-        path: '/',
+        path: '/test',
         name: 'home',
         component: () => import('./views/Home.vue'),
         meta: {
@@ -10,7 +10,7 @@ const routes = [
         }
     },
     {
-        path: '/nas',
+        path: '/',
         name: 'nas',
         component: () => import('./views/Nas.vue'),
         meta: {

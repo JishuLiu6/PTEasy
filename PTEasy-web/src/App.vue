@@ -2,11 +2,11 @@
   <div id="app-view">
     <div id="app-view-router">
       <span style="color:white;font-size:36px;margin-right: 40px;cursor:default;user-select: none;">PtEasy</span>
-      <router-link to="/about">压制组</router-link>
+      <!-- <router-link to="/about">压制组</router-link> -->
       <router-link to="/about">存储设备</router-link>
       <router-link to="/about">保种软件</router-link>
-      <router-link to="/about">备份</router-link>
-      <router-link to="/about">恢复</router-link>
+      <!-- <router-link to="/about">备份</router-link>
+      <router-link to="/about">恢复</router-link> -->
     </div>
     <div id="server-list">
       <div id="server-list-left" style="display: flex;align-items: center;">

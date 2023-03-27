@@ -46,7 +46,10 @@
 
 <script lang="ts" setup>
 import type { Header, Item } from "vue3-easy-data-table";
-
+import { useStore } from 'vuex'
+import {
+  onMounted
+} from "vue";
 const torrentHeaders: Header[] = [
   { text: "种子路径", value: "torrent_path" },
   { text: "做种数", value: "torrent_state.save" },
@@ -235,6 +238,13 @@ const resourceData = [
     save_software: 'qb',
   },
 ]
+
+onMounted(()=>{
+  const store = useStore()
+  store.dispatch('fm/getLocalList', {'path': 'E:'});
+})
+
+
 </script>
 <style scoped>
 #home {
