@@ -1,6 +1,8 @@
-FROM python:3.9.6
+FROM python:3.9-alpine
 
 WORKDIR /root/backend
 COPY requirements .
 RUN pip install --no-cache-dir -r requirements -i https://pypi.douban.com/simple
 COPY . .
+
+CMD gunicorn main:app --bind 0.0.0.0:8999
