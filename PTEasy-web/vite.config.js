@@ -8,7 +8,7 @@ export default defineConfig({
   build:{
     outDir: '../PTEasy-backend/app/templates', // 输出目录
   },
-  base: '/templates/',
+  base: process.env.VUE_APP_BASE_API,
   server:{
     cors: true, // 默认启用并允许任何源
     proxy:{
@@ -16,7 +16,6 @@ export default defineConfig({
         target: 'http://127.0.0.1:9900/',
         changeOrigin: true,
         configure: (proxy, options) => {
-          console.log(proxy, options)
           // proxy 是 'http-proxy' 的实例
         }
       },

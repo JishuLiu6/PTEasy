@@ -1,4 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
+// 导入进度条
+import { start, close } from "@/utils/nporgress";
 
 const routes = [
     {
@@ -26,12 +28,18 @@ const router = createRouter({
 
 // 加载更改标题
 router.beforeEach((to, from, next) => {
+    start();
     const title = to.meta && to.meta.title;
     if (title) {
         document.title = title;
     }
     next();
 });
+
+router.afterEach(() => {
+    close()
+})
+
 
 export {
     router

@@ -1,10 +1,7 @@
 <template>
   <div id="home">
     <div id="home-content">
-      <el-tabs tab-position="left">
-        <el-tab-pane label="统计"></el-tab-pane>
-        <el-tab-pane label="资源">
-          <div class="home-content-resource">
+      <div class="home-content-resource">
             <div class="home-content-search">
               <div style="display:flex">
                 <div style="margin-right: 20px;">
@@ -45,20 +42,6 @@
               </template>
             </EasyDataTable>
           </div>
-        </el-tab-pane> 
-        <el-tab-pane label="种子"></el-tab-pane>
-        <el-tab-pane label="设置">
-          <div>
-            <span class="block_title">种子路径</span>
-            <el-button type="primary" size="small">添加路径</el-button>
-            <el-button type="primary" size="small">扫描种子路径</el-button>
-          </div>
-          <div>
-            <span class="block_title">资源路径</span>
-            <div>添加路径</div>
-          </div>
-        </el-tab-pane>
-      </el-tabs>
     </div>
   </div>
 </template>
@@ -267,14 +250,12 @@ onMounted(() => {
 </script>
 <style lang="scss" scoped>
 #home {
-  width: 1160px;
-  margin: 0 auto;
+  width: 85vw;
 
   &-content {
-    width: 1160px;
-    height: 70vh;
+    width: 85vw;
+    height: 85vh;
     background: #fff;
-    box-shadow: 0 0.5625rem 1.5rem 0 rgb(0 0 0 / 50%);
     border-radius: 10px;
     padding: 20px;
     margin-top: 5px;
@@ -289,7 +270,6 @@ onMounted(() => {
 
 .search_title {
   font-size: 14px;
-  /* font-weight: bolder; */
   margin-right: 5px;
 }
 .block_title{
