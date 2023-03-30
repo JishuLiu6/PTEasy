@@ -62,7 +62,19 @@
 </template>
 
 <script setup>
-
+import { io } from 'socket.io-client';
+import { ref, onMounted, onActivated} from "vue"
+const socket = io('http://127.0.0.1:8999');
+console.log(socket)
+onMounted(() => {
+  console.log(socket)
+  console.log("ok")
+  socket.emit('startFileTask', '123');
+  // store.dispatch('fm/getLocalList', { 'path': '/' });
+})
+onActivated(()=>{
+	console.log('每次组件显示都执行')
+})
 </script>
 
 <style scoped lang="scss">

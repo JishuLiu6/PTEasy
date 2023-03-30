@@ -6,3 +6,5 @@ RUN pip install --no-cache-dir -r requirements -i https://pypi.douban.com/simple
 COPY . .
 
 CMD gunicorn main:app --bind 0.0.0.0:8999
+
+gunicorn -k geventwebsocket.gunicorn.workers.GeventWebSocketWorker -w 1 main:app --bind 0.0.0.0:8999
