@@ -1,8 +1,9 @@
 from flask import Flask
-from flask_cors import *
+from flask_cors import CORS
+
 from app.api import pc_bp
 from app.api.v1 import create_blueprint_v1
-from flask_socketio import SocketIO
+from app.extensions import socketio
 
 
 def register_blueprints(app):
@@ -11,7 +12,7 @@ def register_blueprints(app):
 
 
 app = Flask(__name__)
-socketio = SocketIO(app, cors_allowed_origins='*',async_mode='gevent')
+socketio.init_app(app)
 app.config.from_object('app.config.secure')
 app.config.from_object('app.config.setting')
 register_blueprints(app)

@@ -1,5 +1,6 @@
 from flask import Blueprint
 from app.api.v1 import local
+from .file_socket import *
 
 
 def create_blueprint_v1():

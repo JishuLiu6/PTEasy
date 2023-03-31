@@ -1,4 +1,4 @@
-from app import socketio
+from app.extensions import socketio
 
 
 @socketio.on('startFileTask')
