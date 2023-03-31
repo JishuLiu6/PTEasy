@@ -9,13 +9,15 @@ class FileInfoData(DbBase):
     soft_path = Column(String(255), nullable=False)  # 软路径
     file_name = Column(String(255), nullable=False)  # 文件名
     file_size = Column(Integer, nullable=False)  # 文件大小
-    create_time = Column(Integer, nullable=False)  # 创建时间
+    visit_time = Column(Integer, nullable=False)  # 访问时间
     modify_time = Column(Integer, nullable=False)  # 修改时间
+    file_id = Column(Integer, nullable=False)  # 文件id
     parent_id = Column(Integer, nullable=False)  # 父目录id
     file_type = Column(String(10), nullable=False)  # 文件类型
 
 
 if __name__ == '__main__':
+    pass
     # data = {
     #     'soft_path': '/path/to/file',
     #     'file_name': 'test.txt',
@@ -27,7 +29,7 @@ if __name__ == '__main__':
     # }
     # file_info = FileInfoData.create(data)
 
-    FileInfoData.create_table()
+    # FileInfoData.create_table()
     # create_table()
     # create_table(FileInfo)
     # from app.models.Base import DBSession

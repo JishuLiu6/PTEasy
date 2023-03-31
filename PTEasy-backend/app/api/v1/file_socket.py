@@ -1,8 +1,11 @@
+import uuid
+
 from app.extensions import socketio
+from app.libs.XDisk import file_task
 
 
 @socketio.on('startFileTask')
-def start_file_task(data):
-    print(data)
+def start_file_task(path):
     # 处理任务
-    # file_task(real_path, taskid, socketio)
+    taskid = str(uuid.uuid4())
+    file_task(path, taskid)

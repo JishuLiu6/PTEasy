@@ -4,16 +4,15 @@
       <el-aside width="230px" style="background-color: rgb(231, 235, 239);">
         <el-scrollbar>
           <div id="logo">PtEasy</div>
-          <el-menu :default-openeds="['1']" 
-          style="
-          --el-menu-text-color: #1d273b;
-          --el-menu-hover-text-color: #1d273b;
-          --el-menu-bg-color: transparent;
-          --el-menu-hover-bg-color: rgb(255, 255, 255);
-          --el-menu-active-color: black;
-          --el-menu-item-font-size: 1.1rem;
-          --el-menu-item-height: 45px;
-          ">
+          <el-menu :default-openeds="['1']" style="
+            --el-menu-text-color: #1d273b;
+            --el-menu-hover-text-color: #1d273b;
+            --el-menu-bg-color: transparent;
+            --el-menu-hover-bg-color: rgb(255, 255, 255);
+            --el-menu-active-color: black;
+            --el-menu-item-font-size: 1.1rem;
+            --el-menu-item-height: 45px;
+            ">
             <el-sub-menu index="1">
               <template #title>
                 数据统计
@@ -49,7 +48,7 @@
       </el-aside>
       <el-container>
         <el-header style="border-bottom: 1px solid rgba(0, 0, 0, 0.06);margin: 0 10px">
-          <div id="function-title">设置</div>  
+          <div id="function-title">设置</div>
         </el-header>
         <el-main>
           <el-scrollbar>
@@ -63,18 +62,18 @@
 
 <script setup>
 import { io } from 'socket.io-client';
-import { ref, onMounted, onActivated} from "vue"
+import { ref, onMounted, onActivated } from "vue"
 const socket = io('http://127.0.0.1:8999');
-console.log(socket)
-onMounted(() => {
-  console.log(socket)
-  console.log("ok")
-  socket.emit('startFileTask', '123');
-  // store.dispatch('fm/getLocalList', { 'path': '/' });
-})
-onActivated(()=>{
-	console.log('每次组件显示都执行')
-})
+socket.emit('startFileTask', '/Users/jishuliu/Desktop/PTEasy/PTEasy-backend')
+socket.on("start_file_task", (data) => {
+  console.log(data)
+});
+socket.on("step_error", (data) => {
+  console.log(data)
+});
+socket.on("step_file_task", (data) => {
+  console.log(data)
+});
 </script>
 
 <style scoped lang="scss">
@@ -86,13 +85,16 @@ onActivated(()=>{
   text-align: center;
   margin: 20px 0;
 }
-.el-menu-item{
+
+.el-menu-item {
   margin: 0 10px;
   border-radius: 8px;
 }
-.el-menu-item.is-active{   
-  background-color: rgba(123, 178, 233, 0.5)!important;
+
+.el-menu-item.is-active {
+  background-color: rgba(123, 178, 233, 0.5) !important;
 }
+
 #app-view {
   height: 100vh;
 
@@ -119,12 +121,12 @@ onActivated(()=>{
     opacity: 1;
   }
 }
-#function-title{
+
+#function-title {
   font-size: 20px;
   font-weight: bolder;
   // margin-right: 5px;
   color: #034783;
   display: flex;
   line-height: 60px;
-}
-</style>
+}</style>
