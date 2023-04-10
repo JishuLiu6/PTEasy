@@ -13,7 +13,7 @@ export default defineConfig({
     cors: true, // 默认启用并允许任何源
     proxy:{
       '/local': {
-        target: 'http://127.0.0.1:9900/',
+        target: 'http://127.0.0.1:8999/',
         changeOrigin: true,
         configure: (proxy, options) => {
           // proxy 是 'http-proxy' 的实例
@@ -25,6 +25,11 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
+    }
+  },
+  css: {
+    postcss: {
+      plugins: [require("tailwindcss"), require("autoprefixer")]
     }
   }
 })

@@ -1,5 +1,5 @@
-FROM python:3.9-alpine
-
+# FROM python:3.9-alpine
+FROM python:3.9
 WORKDIR /root/backend
 COPY requirements .
 RUN pip install --no-cache-dir -r requirements -i https://pypi.douban.com/simple

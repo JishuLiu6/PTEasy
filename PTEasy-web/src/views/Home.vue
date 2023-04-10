@@ -1,6 +1,6 @@
 <template>
   <div id="home">
-    <div id="home-content">
+    <!-- <div id="home-content">
       <div class="home-content-resource">
         <div class="home-content-search">
           <div style="display:flex">
@@ -42,7 +42,7 @@
           </template>
         </EasyDataTable>
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 
