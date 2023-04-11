@@ -51,8 +51,20 @@
           <div class="app-header-title">设置</div>
           <div class="app-header-setting">
             <!-- <el-icon size="2em" class="mr-8"><notification/></el-icon> -->
-            
-            <i class="bi bi-card-checklist text-3xl mr-8"></i>
+            <el-popover placement="bottom" :width="250" trigger="click" style="--el-popover-padding: 0;">
+            <template #reference>
+              <i class="bi bi-card-checklist text-3xl mr-8"></i>
+            </template>
+            <div class="task-list">
+              <div class="task-list-title">活动</div>
+              <div class="task-list-item">
+                <div class="task-list-item-status">/Users/jishuliu/SMSBoom</div>
+                <div>
+                  <el-progress :percentage="percentage2" :color="colors"></el-progress>
+                </div>
+              </div>
+            </div>
+          </el-popover>
             <img class="header-image" src="https://avatars.githubusercontent.com/u/32886897?s=40&v=4"
               @click="showHeaderSetting" />
             <el-dropdown ref="headerSetting" trigger="contextmenu">
@@ -79,7 +91,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 // import { io } from 'socket.io-client';
 // import { ref, onMounted, onActivated } from "vue"
 // const socket = io('http://127.0.0.1:8999');
@@ -98,6 +110,19 @@ function showHeaderSetting() {
   console.log(headerSetting)
   headerSetting.value.handleOpen()
 }
+const colors = [
+  { color: '#f56c6c', percentage: 20 },
+  { color: '#e6a23c', percentage: 40 },
+  { color: '#5cb87a', percentage: 60 },
+  { color: '#1989fa', percentage: 80 },
+  { color: '#6f7ad3', percentage: 100 },
+]
+const percentage2 = ref(0)
+onMounted(() => {
+  setInterval(() => {
+    percentage2.value = (percentage2.value % 100) + 10
+  }, 500)
+})
 </script>
 
 <style scoped lang="scss">
@@ -170,6 +195,36 @@ function showHeaderSetting() {
       height: 40px;
       border-radius: 50%;
       cursor: pointer;
+    }
+  }
+}
+
+.task-list{
+  // width: 200px;
+  min-height: 100px;
+  background-color: #fff;
+  border-radius: 8px;
+  .task-list-title{
+    font-size: 18px;
+    font-weight: bolder;
+    color: black;
+    margin-bottom: 10px;
+  }
+  .task-list-item{
+    border: 1px dashed black;
+    .task-list-item-title{
+      font-size: 14px;
+      font-weight: bolder;
+      color: black
+    }
+    .task-list-item-status{
+      font-size: 12px;
+      font-weight: bolder;
+      color: rgba(248,250,252,0.7);
+    }
+    .task-list-item-progress{
+      width: 50px;
+      height: 50px;
     }
   }
 }
