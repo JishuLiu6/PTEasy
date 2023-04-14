@@ -1,9 +1,10 @@
 import os
 from flask import jsonify, request
-from app.libs.XDisk import get_size
+from app.libs.x_disk import get_size, get_file_type
 from app.libs.redprint import Redprint
 
 redprint = Redprint('local')
+
 
 @redprint.route('/list', methods=['POST'])
 def directory_list():
@@ -18,7 +19,8 @@ def directory_list():
         sub_filepath = os.path.join(real_path, path)
         sub_filepath_info = os.stat(sub_filepath)
         if os.path.isfile(sub_filepath):
-            file_type = "file"
+            # 根据后缀判断文件类型
+            file_type = get_file_type(sub_filepath)
             file_size = sub_filepath_info.st_size
         else:
             file_type = "dir"

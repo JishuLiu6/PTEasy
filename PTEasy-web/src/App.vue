@@ -3,16 +3,16 @@
     <el-container style="height: 100vh">
       <el-aside width="230px" style="background-color: rgb(231, 235, 239);">
         <el-scrollbar>
-          <div id="logo">PtEasy</div>
+          <div id="logo1">PtEasy</div>
           <el-menu :default-openeds="['1']" style="
-                    --el-menu-text-color: #1d273b;
-                    --el-menu-hover-text-color: #1d273b;
-                    --el-menu-bg-color: transparent;
-                    --el-menu-hover-bg-color: rgb(255, 255, 255);
-                    --el-menu-active-color: black;
-                    --el-menu-item-font-size: 1.1rem;
-                    --el-menu-item-height: 45px;
-                    ">
+                      --el-menu-text-color: #1d273b;
+                      --el-menu-hover-text-color: #1d273b;
+                      --el-menu-bg-color: transparent;
+                      --el-menu-hover-bg-color: rgb(255, 255, 255);
+                      --el-menu-active-color: black;
+                      --el-menu-item-font-size: 1.1rem;
+                      --el-menu-item-height: 45px;
+                      ">
             <el-menu-item index="2">
               <template #title>
                 站点
@@ -51,20 +51,35 @@
           <div class="app-header-title">设置</div>
           <div class="app-header-setting">
             <!-- <el-icon size="2em" class="mr-8"><notification/></el-icon> -->
-            <el-popover placement="bottom" :width="250" trigger="click" style="--el-popover-padding: 0;">
-            <template #reference>
-              <i class="bi bi-card-checklist text-3xl mr-8"></i>
-            </template>
-            <div class="task-list">
-              <div class="task-list-title">活动</div>
-              <div class="task-list-item">
-                <div class="task-list-item-status">/Users/jishuliu/SMSBoom</div>
-                <div>
-                  <el-progress :percentage="percentage2" :color="colors"></el-progress>
+            <el-popover placement="bottom" :width="250" trigger="hover" style="--el-popover-padding: 0">
+              <template #reference>
+                <i class="bi bi-card-checklist text-3xl mr-8"></i>
+              </template>
+              <div class="rounded-lg bg-white pt-3 pb-5">
+                <div class="small-title">活动</div>
+                <div class="border-gray-600 border-b-2 border-dashed hover:bg-blue-100 cursor-pointer p-3">
+                  <div class="text-xs text-gray-600">扫描文件夹</div>
+                  <div class="text-xs text-gray-400">/Users/jishuliu/SMSBoom</div>
+                  <div>
+                    <el-progress :percentage="percentage2" :color="colors"></el-progress>
+                  </div>
+                </div>
+                <div class="border-gray-600 border-b-2 border-dashed hover:bg-blue-100 cursor-pointer p-3">
+                  <div class="text-xs text-gray-600">扫描文件夹</div>
+                  <div class="text-xs text-gray-400">/Users/jishuliu/SMSBoom</div>
+                  <div>
+                    <el-progress :percentage="percentage2" :color="colors"></el-progress>
+                  </div>
+                </div>
+                <div class="border-gray-600 border-b-2 border-dashed hover:bg-blue-100 cursor-pointer p-3">
+                  <div class="text-xs text-gray-600">扫描文件夹</div>
+                  <div class="text-xs text-gray-400">/Users/jishuliu/SMSBoom</div>
+                  <div>
+                    <el-progress :percentage="percentage2" :color="colors"></el-progress>
+                  </div>
                 </div>
               </div>
-            </div>
-          </el-popover>
+            </el-popover>
             <img class="header-image" src="https://avatars.githubusercontent.com/u/32886897?s=40&v=4"
               @click="showHeaderSetting" />
             <el-dropdown ref="headerSetting" trigger="contextmenu">
@@ -125,7 +140,7 @@ onMounted(() => {
 })
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
 #logo {
   color: #034783;
   font-size: 36px;
@@ -134,6 +149,11 @@ onMounted(() => {
   text-align: center;
   margin: 20px 0;
 }
+
+.small-title{
+  @apply text-base font-black text-black border-b-2 border-solid border-gray-400 pl-2 pb-2;
+}
+
 
 .el-menu-item {
   margin: 0 10px;
@@ -190,6 +210,7 @@ onMounted(() => {
   &-setting {
     display: flex;
     align-items: center;
+
     .header-image {
       width: 40px;
       height: 40px;
@@ -199,33 +220,8 @@ onMounted(() => {
   }
 }
 
-.task-list{
-  // width: 200px;
-  min-height: 100px;
-  background-color: #fff;
-  border-radius: 8px;
-  .task-list-title{
-    font-size: 18px;
-    font-weight: bolder;
-    color: black;
-    margin-bottom: 10px;
-  }
-  .task-list-item{
-    border: 1px dashed black;
-    .task-list-item-title{
-      font-size: 14px;
-      font-weight: bolder;
-      color: black
-    }
-    .task-list-item-status{
-      font-size: 12px;
-      font-weight: bolder;
-      color: rgba(248,250,252,0.7);
-    }
-    .task-list-item-progress{
-      width: 50px;
-      height: 50px;
-    }
-  }
+.el-popover.el-popper{
+  padding: 0 !important;
 }
+
 </style>

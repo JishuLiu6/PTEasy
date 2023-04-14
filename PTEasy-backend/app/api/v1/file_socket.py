@@ -1,7 +1,7 @@
 import uuid
 
 from app.extensions import socketio
-from app.libs.XDisk import file_task
+from app.libs.x_disk import file_task
 
 
 @socketio.on('startFileTask')

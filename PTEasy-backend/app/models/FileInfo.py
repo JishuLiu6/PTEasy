@@ -2,18 +2,21 @@ from sqlalchemy import Column, Integer, String
 from app.models.Base import DbBase
 
 
-# 定义映射类User，其继承上一步创建的Base
-class FileInfoData(DbBase):
-    __tablename__ = 'FileInfoData'
-    id = Column(Integer, primary_key=True, autoincrement=True)
+class FileInfo(DbBase):
+    '''
+    文件信息表
+    '''
+    __tablename__ = 'FileInfo'
+    id = Column(Integer, primary_key=True, autoincrement=True)  # id
     soft_path = Column(String(255), nullable=False)  # 软路径
     file_name = Column(String(255), nullable=False)  # 文件名
     file_size = Column(Integer, nullable=False)  # 文件大小
     visit_time = Column(Integer, nullable=False)  # 访问时间
     modify_time = Column(Integer, nullable=False)  # 修改时间
     file_id = Column(Integer, nullable=False)  # 文件id
-    parent_id = Column(Integer, nullable=False)  # 父目录id
+    parent_id = Column(Integer, nullable=False)  # 目录id
     file_type = Column(String(10), nullable=False)  # 文件类型
+    is_delete = Column(Integer, nullable=False, default=0)  # 是否已经删除
 
 
 if __name__ == '__main__':
