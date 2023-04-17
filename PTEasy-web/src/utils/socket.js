@@ -1,5 +1,15 @@
-import { io } from 'socket.io-client';
+import {io} from "socket.io-client";
 
-const socket = io('http://127.0.0.1:8999');
+class SocketHandler {
+  constructor(url) {
+    this.socket = io(url);
+  }
 
-export default socket;
+  onMessage(event, callback) {
+    this.socket.on(event, (data) => {
+      callback(data);
+    });
+  }
+}
+
+export default SocketHandler;

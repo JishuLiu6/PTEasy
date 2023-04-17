@@ -51,9 +51,11 @@
           <div class="app-header-title">设置</div>
           <div class="app-header-setting">
             <!-- <el-icon size="2em" class="mr-8"><notification/></el-icon> -->
+            <div class="text-3xl mr-8">日志</div>
             <el-popover placement="bottom" :width="250" trigger="hover" style="--el-popover-padding: 0">
               <template #reference>
-                <i class="bi bi-card-checklist text-3xl mr-8"></i>
+                <!-- <i class="bi bi-card-checklist text-3xl mr-8"></i> -->
+                <div class="text-3xl mr-8">活动</div>
               </template>
               <div class="rounded-lg bg-white pt-3 pb-5">
                 <div class="small-title">活动</div>

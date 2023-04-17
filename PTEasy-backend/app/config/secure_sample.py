@@ -3,5 +3,5 @@ import os
 os.urandom(24)
 """
 
-SECRET_KEY = '1234'
+SECRET_KEY = 'fasdf123q123'
 

@@ -1,4 +1,5 @@
 import POST from '@/api/post';
+
 export default {
   getLocalList({ commit }, data) {
     POST.localList(data).then(response => {

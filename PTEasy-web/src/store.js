@@ -6,6 +6,7 @@ import actions from '@/store/actions';
 export default {
     namespaced: true,
     modules: {
+        
     },
     state,
     mutations,
