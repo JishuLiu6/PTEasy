@@ -39,11 +39,11 @@ def db_session_scope():
 class BaseMixin:
     @classmethod
     def query(cls, filter_func=None):
-        session = DBSession()
-        query = session.query(cls)
-        if filter_func:
-            query = filter_func(query)
-        return query
+        with db_session_scope() as session:
+            query = session.query(cls)
+            if filter_func:
+                query = filter_func(query)
+            return query
 
     def serialize(self, include=None, exclude=None):
         if include is None:
@@ -77,8 +77,9 @@ class BaseMixin:
     @classmethod
     def create(cls, model_dict):
         cls._ensure_table_exists()
-        model_instance = cls(**model_dict)
+
         with db_session_scope() as session:
+            model_instance = cls(**model_dict)
             session.add(model_instance)
 
     # 更新记录

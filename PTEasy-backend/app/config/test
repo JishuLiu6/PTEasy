@@ -1,0 +1,26 @@
+07dd8020-b912-4793-a778-6b1ec506c19e file Traceback (most recent call last):
+  File "/Users/jishuliu/Desktop/PTEasy/PTEasy-backend/venv/lib/python3.9/site-packages/sqlalchemy/orm/session.py", line 3614, in _get_impl
+    primary_key_identity = list(
+  File "/Users/jishuliu/Desktop/PTEasy/PTEasy-backend/venv/lib/python3.9/site-packages/sqlalchemy/orm/session.py", line 3615, in <genexpr>
+    primary_key_identity[prop.key]
+KeyError: 'id'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/jishuliu/Desktop/PTEasy/PTEasy-backend/app/libs/x_disk.py", line 65, in get_file_info
+    task.step_completed(file_entry['path'])
+  File "/Users/jishuliu/Desktop/PTEasy/PTEasy-backend/app/libs/task_handler.py", line 35, in step_completed
+    progress = TaskInfo.get({'task_id': self.task_id})['progress']
+  File "/Users/jishuliu/Desktop/PTEasy/PTEasy-backend/app/models/Base.py", line 73, in get
+    result = session.query(cls).get(primary_key)
+  File "<string>", line 2, in get
+  File "/Users/jishuliu/Desktop/PTEasy/PTEasy-backend/venv/lib/python3.9/site-packages/sqlalchemy/util/deprecations.py", line 383, in warned
+    return fn(*args, **kwargs)  # type: ignore[no-any-return]
+  File "/Users/jishuliu/Desktop/PTEasy/PTEasy-backend/venv/lib/python3.9/site-packages/sqlalchemy/orm/query.py", line 1130, in get
+    return self._get_impl(ident, loading.load_on_pk_identity)
+  File "/Users/jishuliu/Desktop/PTEasy/PTEasy-backend/venv/lib/python3.9/site-packages/sqlalchemy/orm/query.py", line 1139, in _get_impl
+    return self.session._get_impl(
+  File "/Users/jishuliu/Desktop/PTEasy/PTEasy-backend/venv/lib/python3.9/site-packages/sqlalchemy/orm/session.py", line 3620, in _get_impl
+    raise sa_exc.InvalidRequestError(
+sqlalchemy.exc.InvalidRequestError: Incorrect names of values in identifier to formulate primary key for session.get(); primary key attribute names are 'id' (synonym names are also accepted)

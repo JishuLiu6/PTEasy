@@ -2,7 +2,7 @@ export default {
     methods: {
         /**
          * Bytes to KB, MB, ..
-         * @param bytes
+         * @param bytes∂
          * @returns {string}
          */
         bytesToHuman(bytes) {
@@ -26,7 +26,7 @@ export default {
             // if date not defined
             if (timestamp === undefined || timestamp === null) return '-';
 
-            const date = new Date(timestamp * 1000);
+            const date = new Date(timestamp);
 
             return date.toLocaleString(this.$store.state.fm.settings.lang);
         },

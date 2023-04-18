@@ -12,11 +12,11 @@ const routes = [
         }
     },
     {
-        path: '/nas',
-        name: 'nas',
-        component: () => import('./views/Nas.vue'),
+        path: '/log',
+        name: 'home',
+        component: () => import('./views/LogsView.vue'),
         meta: {
-            title: 'NAS'
+            title: '日志'
         }
     }
 ]

@@ -3,7 +3,8 @@ import os
 import time
 import traceback
 from concurrent.futures import ThreadPoolExecutor
-from app.extensions import socketio
+
+from app.libs.task_handler import TaskHandler
 
 
 def get_size(path) -> int:
@@ -30,18 +31,19 @@ def get_size(path) -> int:
     return t_size
 
 
-def get_file_info(file_entry, taskid) -> None:
+def get_file_info(file_entry, task) -> None:
     '''
     获取目录或文件的大小
     :param file_entry:
-    :param taskid:
+    :param task:
     :return: t_size
     '''
-
+    task.step_start(file_entry['path'])
     try:
         sub_filepath_info = file_entry['stat']
         if file_entry['is_file']:
-            file_type = "file"
+            # file_type = "file"
+            file_type = get_file_type(file_entry['path'])
             file_size = sub_filepath_info.st_size
         else:
             file_type = "dir"
@@ -52,26 +54,20 @@ def get_file_info(file_entry, taskid) -> None:
             mtime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(sub_filepath_info.st_mtime))
 
             from app.models.FileInfo import FileInfo
-            FileInfo.create({'soft_path': os.path.basename(file_entry['path']),
-                                 'file_name': file_entry['path'],
-                                 'file_size': file_size,
-                                 'file_type': file_type,
-                                 'visit_time': atime,
-                                 'modify_time': mtime,
-                                 'file_id': sub_filepath_info.st_ino,
-                                 'parent_id': os.stat(os.path.dirname(file_entry['path'])).st_ino})
+            FileInfo.create({'soft_path': file_entry['path'],
+                             'file_name': os.path.basename(file_entry['path']),
+                             'file_size': file_size,
+                             'file_type': file_type,
+                             'visit_time': atime,
+                             'modify_time': mtime,
+                             'file_id': sub_filepath_info.st_ino,
+                             'parent_id': os.stat(os.path.dirname(file_entry['path'])).st_ino})
             # 发送步骤完成
-
-            socketio.emit('step_file_task', {'task_id': taskid,
-                                             'status': 'completed',
-                                             'task_data': {'file_path': file_entry['path']}
-                                             })
+            task.step_completed(file_entry['path'])
     except Exception as e:
+        print(e)
         # 发送步骤错误
-        print(traceback.format_exc())
-        socketio.emit('step_error', {'task_id': taskid,
-                                     'status': 'error',
-                                     'task_data': {'message': traceback.format_exc()}})
+        task.step_error(file_entry)
 
         return None
 
@@ -86,9 +82,8 @@ def file_task(real_path, taskid) -> None:
         entries_list = list(entries)
         total_entries = len(entries_list)
         # socket发送任务长度消息
-        socketio.emit('start_file_task', {'task_id': taskid,
-                                          'status': 'running',
-                                          'task_data': {'task_len': total_entries}})
+        task = TaskHandler(task_id=taskid, task_type='file', task_len=total_entries)
+        task.start_task()
         for entry in entries_list:
             # 为了序列化记录，这里需要将entry转换为dict
             entry_dict = {
@@ -97,7 +92,7 @@ def file_task(real_path, taskid) -> None:
                 'path': entry.path
             }
             with ThreadPoolExecutor() as executor:
-                executor.map(lambda x: get_file_info(entry_dict, taskid), [None])
+                executor.map(lambda x: get_file_info(entry_dict, task), [None])
 
 
 def get_file_type(file_path) -> str:
@@ -106,7 +101,7 @@ def get_file_type(file_path) -> str:
     '''
     mime_type, _ = mimetypes.guess_type(file_path)
     file_extension = os.path.splitext(file_path)[1]
-    print(file_extension)
+    # print(file_extension)
     script_extensions = [
         '.py', '.js', '.sh', '.rb', '.php', '.java', '.c', '.cpp', '.cs', '.go',
         '.scala', '.rs', '.swift', '.kt', '.hs', '.f', '.erl', '.r', '.pl', '.m',
