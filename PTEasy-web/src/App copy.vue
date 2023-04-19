@@ -1,220 +1,241 @@
 <template>
-  <div id="app-view">
-    <el-container style="height: 100vh">
-      <el-aside width="230px" style="background-color: rgb(231, 235, 239);">
-        <el-scrollbar>
-          <div id="logo1">PtEasy</div>
-          <el-menu :default-openeds="['1']" style="
-                          --el-menu-text-color: #1d273b;
-                          --el-menu-hover-text-color: #1d273b;
-                          --el-menu-bg-color: transparent;
-                          --el-menu-hover-bg-color: rgb(255, 255, 255);
-                          --el-menu-active-color: black;
-                          --el-menu-item-font-size: 1.1rem;
-                          --el-menu-item-height: 45px;
-                          ">
-            <el-menu-item index="2">
-              <template #title>
-                站点
-              </template>
-            </el-menu-item>
-            <el-menu-item index="4">
-              <template #title>
-                设置
-              </template>
-            </el-menu-item>
-            <el-menu-item index="5">
-              <template #title>
-                通知
-              </template>
-            </el-menu-item>
-            <el-menu-item index="6">
-              <template #title>
-                备份
-              </template>
-            </el-menu-item>
-            <el-menu-item index="3">
-              <template #title>
-                下载器
-              </template>
-            </el-menu-item>
-            <el-menu-item index="1">
-              <template #title>
-                数据统计
-              </template>
-            </el-menu-item>
-          </el-menu>
-        </el-scrollbar>
-      </el-aside>
-      <el-container>
-        <el-header class="app-header">
-          <div class="app-header-title">设置</div>
-          <div class="app-header-setting">
-            <!-- <el-icon size="2em" class="mr-8"><notification/></el-icon> -->
-            <div class="text-3xl mr-8">日志</div>
-            <el-popover placement="bottom" :width="250" trigger="hover" style="--el-popover-padding: 0">
-              <template #reference>
-                <i class="bi bi-gear-fill text-3xl mr-8" :class="hasActiveTasks ? 'text-blue-500' : 'text-gray-600'"></i>
-              </template>
-              <div class="rounded-lg bg-white shadow-md pt-3 pb-5">
-                <div class="small-title text-lg font-semibold text-gray-700 px-3 mb-2">活动</div>
-                <div v-for="index in 3" :key="index"
-                  class="border-gray-300 border-b-2 border-dashed hover:bg-blue-100 cursor-pointer p-3">
-                  <div class="text-xs text-gray-600">扫描文件夹</div>
-                  <div class="text-xs text-gray-400">/Users/jishuliu/SMSBoom</div>
-                  <div>
-                    <el-progress :percentage="percentage2" :color="colors"></el-progress>
-                  </div>
+  <div class="h-screen flex" :class="themeClass">
+    <div class="sidebar">
+      <div class="logo mb-6">PtEasy</div>
+      <el-menu :default-openeds="['1']" class="menu">
+        <el-menu-item v-for="(t_route, index) in sidebarRoutes" :key="index" :index="index" class="my-4"
+          @click.native="handleRouteClick(t_route.path)">
+          <a href="javascript:void(0)" class="flex items-center">
+            <i :class="[t_route.meta.icon, 'text-2xl']"></i>
+            <span class="ml-4 inline-block align-middle">{{ t_route.meta.title }}</span>
+          </a>
+        </el-menu-item>
+      </el-menu>
+
+    </div>
+    <div class="flex-grow flex flex-col">
+      <div class="topbar">
+        <div class="topbar-title text-3xl font-bold">{{ $route.meta.title }}</div>
+        <div class="flex items-center space-x-8 ml-auto">
+          <i class="icon bi-file-text text-3xl text-white" @click="handleRouteClick('logs')"></i>
+          <el-popover placement="bottom" :width="250" trigger="hover" style="--el-popover-padding: 0">
+            <template #reference>
+              <i class="bi bi-gear-fill mr-8 text-3xl text-white"
+                :class="hasActiveTasks ? 'text-blue-500' : 'text-gray-600'"></i>
+            </template>
+            <div class="rounded-lg bg-white shadow-md pt-3 pb-5">
+              <div class="text-lg font-semibold text-gray-700 px-3 mb-2">活动</div>
+              <div v-for="index in 3" :key="index"
+                class="border-gray-300 border-b-2 border-dashed hover:bg-violet-100 cursor-pointer p-3">
+                <div class="text-xs text-gray-600">扫描文件夹</div>
+                <div class="text-xs text-gray-500">/Users/jishuliu/SMSBoom</div>
+                <div>
+                  <el-progress :percentage="percentage2" :color="colors"></el-progress>
                 </div>
               </div>
-            </el-popover>
-
-            <img class="header-image" src="https://avatars.githubusercontent.com/u/32886897?s=40&v=4"
-              @click="showHeaderSetting" />
-            <el-dropdown ref="headerSetting" trigger="contextmenu">
-              <el-icon class="el-icon--right">
-                <i class="bi bi-caret-down-fill text-sm" @click="showHeaderSetting"></i>
-              </el-icon>
-              <template #dropdown>
-                <el-dropdown-menu>
-                  <el-dropdown-item>设置</el-dropdown-item>
-                  <el-dropdown-item>登出</el-dropdown-item>
-                </el-dropdown-menu>
-              </template>
-            </el-dropdown>
-          </div>
-        </el-header>
-        <el-main>
-          <el-scrollbar>
-            <router-view />
-          </el-scrollbar>
-        </el-main>
-      </el-container>
-    </el-container>
+            </div>
+          </el-popover>
+          <i class="bi bi-palette text-3xl text-white ml-8" @click="toggleTheme"></i>
+        </div>
+      </div>
+      <div class="main-content">
+        <transition name="fade" mode="out-in">
+          <router-view />
+        </transition>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue'
-import io from "socket.io-client";
-// import SocketHandler from '@/utils/socket';
-// import { ref, onMounted, onActivated } from "vue"
-// const socketHandler = io('http://127.0.0.1:8999');
+import { ref, onMounted, onUnmounted } from 'vue';
+import { router } from './router';
 
-// socketHandler.emit('startFileTask', '/')
-// socketHandler.on("task:start", (data) => {
-//   console.log(data)
-// });
-// socketHandler.on("task:step_start", (data) => {
-//   console.log(data)
-// });
-// socketHandler.on("task:step_completed", (data) => {
-//   console.log(data)
-// });
-// socketHandler.on("task:step_error", (data) => {
-//   console.log(data)
-// });
-// const headerSetting = ref()
-// function showHeaderSetting() {
-//   console.log(headerSetting)
-//   headerSetting.value.handleOpen()
-// }
-const colors = [
-  { color: '#f56c6c', percentage: 20 },
-  { color: '#e6a23c', percentage: 40 },
-  { color: '#5cb87a', percentage: 60 },
-  { color: '#1989fa', percentage: 80 },
-  { color: '#6f7ad3', percentage: 100 },
-]
-const percentage2 = ref(0)
+const sidebarRoutes = ref([]);
+const themeClass = ref('theme-light');
+
 onMounted(() => {
-  setInterval(() => {
-    percentage2.value = (percentage2.value % 100) + 10
-  }, 500)
-})
+  document.documentElement.classList.add(themeClass.value);
+
+  sidebarRoutes.value = router.options.routes.filter(
+    (route) => !route.meta.hideSidebar
+  );
+});
+
+onUnmounted(() => {
+  document.documentElement.classList.remove(themeClass.value);
+});
+
+
+
+const toggleTheme = () => {
+  document.documentElement.classList.remove(themeClass.value);
+  themeClass.value = themeClass.value === 'theme-light' ? 'theme-dark' : 'theme-light';
+  document.documentElement.classList.add(themeClass.value);
+};
+
+const handleRouteClick = (path) => {
+  router.push(path);
+};
 </script>
 
+
 <style lang="scss">
-#logo {
-  color: #034783;
-  font-size: 36px;
-  cursor: default;
-  user-select: none;
-  text-align: center;
-  margin: 20px 0;
+@import './assets/scss/main.scss';
+
+.sidebar {
+  width: 18rem;
+  background-color: var(--sidebar-bg-color);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  z-index: 10;
 }
 
-.small-title {
-  @apply text-base font-black text-black border-b-2 border-solid border-gray-400 pl-2 pb-2;
+.logo {
+  position: relative;
+  display: inline-block;
+  padding: 5px 10px;
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 2rem;
+  color: var(--logo-text-color);
+  background: var(--logo-bg-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-transform: uppercase;
+  letter-spacing: 0.1rem;
+  cursor: pointer;
+  border-radius: 5px;
+  // background-color: rgba(0, 0, 0, 0.1);
+
+  &:hover::before {
+    animation: shine 1.5s linear infinite;
+  }
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 30%;
+    height: 100%;
+    background-image: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.8) 50%, rgba(255, 255, 255, 0) 100%);
+    transform: skewX(-25deg);
+    opacity: 0.5;
+    pointer-events: none;
+  }
 }
 
+.theme-dark .logo::before {
+  background-image: linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.5) 50%, rgba(0, 0, 0, 0) 100%);
+}
+@keyframes shine {
+  0% {
+    left: -30%;
+  }
+
+  100% {
+    left: 50%;
+  }
+}
+
+
+.el-menu {
+  --el-menu-text-color: var(--text-color);
+  --el-menu-bg-color: transparent;
+  --el-menu-item-font-size: 1.4rem;
+  --el-menu-item-height: 60px;
+  border: none !important;
+  flex-grow: 1;
+}
 
 .el-menu-item {
-  margin: 0 10px;
-  border-radius: 8px;
+  margin-bottom: 1rem; // 增加菜单项之间的间距
+  border-radius: 6px;
+  user-select: none;
+  transition: all 0.3s ease; // 添加过渡效果
+
+  &:hover {
+    color: var(--accent-color);
+    background-color: var(--menu-item-hover-color) !important;
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  }
 }
+
 
 .el-menu-item.is-active {
-  background-color: rgba(123, 178, 233, 0.5) !important;
+  color: var(--primary-color) !important;
+  background-color: var(--menu-item-active-color) !important;
+  border-radius: 6px;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  font-weight: bold; // 使激活状态下的菜单项加粗
 }
 
-#app-view {
-  height: 100vh;
-
-  #app-view-router {
-    width: 1160px;
-    margin: auto;
-    height: 52px;
-    display: flex;
-    align-items: center;
-  }
-
-  #app-view-router a {
-    opacity: .5;
-    filter: alpha(opacity=50);
-    color: #fff;
-    text-decoration: none;
-    font-size: 18px;
-    line-height: 1.2;
-    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3);
-    margin-right: 20px;
-  }
-
-  #app-view-router a:hover {
-    opacity: 1;
-  }
-}
-
-.app-header {
-  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-  margin: 0 10px;
+.topbar {
+  height: 4rem; // 增加顶部栏高度
+  background-color: var(--topbar-bg-color);
+  color: white;
+  border-bottom: none;
+  padding: 0 2rem;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  z-index: 11;
+  transition: all 0.3s ease; // 添加过渡效果
+}
 
-  &-title {
-    font-size: 20px;
-    font-weight: bolder;
-    // margin-right: 5px;
-    color: #034783;
-    display: flex;
-    line-height: 60px;
+.topbar-title {
+  margin-right: auto;
+  font-size: 1.5rem;
+  transition: color 0.3s ease; // 添加过渡效果
+}
+
+.bi-person-circle {
+  font-size: 2.5rem;
+}
+
+
+.el-dropdown-menu {
+  border-radius: 6px;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+}
+
+.main-content {
+  flex-grow: 1;
+  font-size: 1.1rem;
+  @apply bg-gray-100;
+}
+
+.icon {
+  padding: 0.5rem;
+  border-radius: 6px;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    cursor: pointer;
   }
+}
 
-  &-setting {
-    display: flex;
-    align-items: center;
-
-    .header-image {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      cursor: pointer;
-    }
-  }
+.el-popover {
+  --el-popover-background-color: rgba(109, 40, 217, 0.15) !important;
+  ;
+  --el-popover-border-radius: 0.5rem;
 }
 
 .el-popover.el-popper {
   padding: 0 !important;
 }
+
+.fade-enter-active,
+  .fade-leave-active {
+    transition: opacity 0.3s ease;
+  }
+
+  .fade-enter,
+  .fade-leave-to {
+    opacity: 0;
+  }
 </style>
