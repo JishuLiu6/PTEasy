@@ -2,7 +2,7 @@ import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 
 // 开启进度条
-export function start(color = 'var(--progress-bar-color)') {
+export function start(color = 'var(--el-color-primary-light-3)') {
     NProgress.configure({
         showSpinner: false,
         minimum: 0.1,

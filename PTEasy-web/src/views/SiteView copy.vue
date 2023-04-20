@@ -1,60 +1,48 @@
 <template>
   <div class="flex flex-col p-6 max-h-screen rounded-md bg-white m-6 shadow-md">
     <div class="l-block-shadow flex-grow rounded-lg p-4" style="height: 65vh">
-      <div class="mb-4 flex space-x-4">
-        <el-button type="primary" @click="openAddDialog">添加网站</el-button>
-        <el-button type="primary" @click="checkConnectivity">检查连通性</el-button>
-      </div>
       <el-table :data="tableData" class="text-sm" max-height="60vh">
-        <el-table-column label="站点名" prop="siteName" min-width="120"></el-table-column>
-        <el-table-column label="用户名" prop="username" min-width="80"></el-table-column>
-        <el-table-column label="等级" prop="level" min-width="60"></el-table-column>
-        <el-table-column label="数据量" prop="dataSize" min-width="100"></el-table-column>
-        <el-table-column label="分享率" prop="shareRatio" min-width="100"></el-table-column>
-        <el-table-column label="做种数" prop="seedingCount" min-width="100"></el-table-column>
-        <el-table-column label="做种体积" prop="seedingSize" min-width="100"></el-table-column>
-        <el-table-column label="魔力值/积分" prop="magicPoints" min-width="120"></el-table-column>
-        <el-table-column label="时魔" prop="timeMagic" min-width="100"></el-table-column>
-        <el-table-column label="入会时间" prop="entryTime" min-width="150"></el-table-column>
-        <el-table-column label="数据更新时间" prop="updateTime" min-width="150"></el-table-column>
-        <el-table-column label="状态" prop="status" min-width="100">
+        <el-table-column label="站点名" prop="siteName"></el-table-column>
+        <el-table-column label="用户名" prop="username"></el-table-column>
+        <el-table-column label="等级" prop="level"></el-table-column>
+        <el-table-column label="数据量" prop="dataSize"></el-table-column>
+        <el-table-column label="分享率" prop="shareRatio"></el-table-column>
+        <el-table-column label="做种数" prop="seedingCount"></el-table-column>
+        <el-table-column label="做种体积" prop="seedingSize"></el-table-column>
+        <el-table-column label="魔力值/积分" prop="magicPoints"></el-table-column>
+        <el-table-column label="时魔" prop="timeMagic"></el-table-column>
+        <el-table-column label="入会时间" prop="entryTime"></el-table-column>
+        <el-table-column label="数据更新时间" prop="updateTime"></el-table-column>
+        <el-table-column label="状态" prop="status" min-width="120">
           <template v-slot="{ row }">
             <span class="px-2 py-1 rounded text-white" :style="statusStyle(row.status)">
               {{ row.status }}
             </span>
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="150">
+        <el-table-column label="操作" width="180">
           <template v-slot="{ row }">
             <el-button type="text" @click="refresh(row)">刷新</el-button>
-            <el-button type="text" @click="edit(row)">编辑</el-button>
-            <el-button type="text" @click="deleteSite(row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
     </div>
-
-    <pt-dialog title="添加站点" v-model="addDialogVisible" @update:visible="addDialogVisible = $event" @confirm="addSite">
-      <el-form :model="addFormData" label-width="60px">
-        <el-form-item label="网站">
-          <el-select v-model="addFormData.website" placeholder="请选择网站">
-            <el-option label="网站A" value="siteA"></el-option>
-            <el-option label="网站B" value="siteB"></el-option>
-            <el-option label="网站C" value="siteC"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="账号">
-          <el-input v-model="addFormData.account"></el-input>
-        </el-form-item>
-        <el-form-item label="密码">
-          <el-input v-model="addFormData.password" type="password"></el-input>
-        </el-form-item>
-      </el-form>
-    </pt-dialog>
-
   </div>
+  <el-dialog title="添加站点" :visible.sync="addDialogVisible">
+    <el-form :model="addFormData" label-width="120px">
+      <el-form-item label="站点名">
+        <el-input v-model="addFormData.siteName"></el-input>
+      </el-form-item>
+      <el-form-item label="用户名">
+        <el-input v-model="addFormData.username"></el-input>
+      </el-form-item>
+    </el-form>
+    <template #footer>
+      <el-button @click="addDialogVisible = false">取消</el-button>
+      <el-button type="primary" @click="addSite">添加站点</el-button>
+    </template>
+  </el-dialog>
 </template>
-
 <script setup>
 import { ref } from 'vue';
 
@@ -140,23 +128,7 @@ const addFormData = ref({
 });
 
 function openAddDialog() {
-  console.log("打开窗口");
   addDialogVisible.value = true;
-}
-
-function checkConnectivity() {
-  // 检查连通性
-  console.log("检查连通性");
-}
-
-function edit(row) {
-  // 编辑功能
-  console.log("编辑站点", row);
-}
-
-function deleteSite(row) {
-  // 删除站点功能
-  console.log("删除站点", row);
 }
 
 function handlePageChange(page) {
