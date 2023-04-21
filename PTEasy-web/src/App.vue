@@ -1,5 +1,5 @@
 <template>
-  <div class="h-screen flex">
+  <div class="h-screen flex overflow-hidden">
     <div class="sidebar">
       <div class="logo mb-6">PtEasy</div>
       <el-menu :default-openeds="['1']" class="menu">
@@ -53,10 +53,10 @@
           </el-popover>
         </div>
       </div>
-      <div class="main-content">
-        <transition name="fade" mode="out-in">
-          <router-view />
-        </transition>
+      <div class="main-content h-full">
+          <transition name="fade" mode="out-in">
+            <router-view />
+          </transition>
       </div>
     </div>
   </div>
@@ -67,36 +67,34 @@ import { router } from './router';
 
 const sidebarRoutes = ref([]);
 
-const themeClass = ref(localStorage.getItem('themeClass') || 'theme-dark');
+const themeClass = ref(localStorage.getItem('themeClass') || 'theme-red');
 
 const themes = ref([
-  { name: 'theme-purple', color: 'purple' },
-  { name: 'theme-green', color: 'green' },
   { name: 'theme-red', color: 'red' },
   { name: 'theme-orange', color: 'orange' },
-  { name: 'theme-dark', color: 'dark' }
+  { name: 'theme-green', color: 'green' }
 ]);
 
 const activityList = ref([
-      {
-        name: '扫描文件夹',
-        path: '/Users/jishuliu/SMSBoom',
-        percentage: Math.floor(Math.random() * 101),
-        color: 'primary'
-      },
-      {
-        name: '上传文件',
-        path: '/Users/jishuliu/Documents/Resume',
-        percentage: Math.floor(Math.random() * 101),
-        color: 'success'
-      },
-      {
-        name: '下载文件',
-        path: '/Users/jishuliu/Documents/Notes',
-        percentage: Math.floor(Math.random() * 101),
-        color: 'warning'
-      }
-    ])
+  {
+    name: '扫描文件夹',
+    path: '/Users/jishuliu/SMSBoom',
+    percentage: Math.floor(Math.random() * 101),
+    color: 'primary'
+  },
+  {
+    name: '上传文件',
+    path: '/Users/jishuliu/Documents/Resume',
+    percentage: Math.floor(Math.random() * 101),
+    color: 'success'
+  },
+  {
+    name: '下载文件',
+    path: '/Users/jishuliu/Documents/Notes',
+    percentage: Math.floor(Math.random() * 101),
+    color: 'warning'
+  }
+])
 
 const changeTheme = (newTheme) => {
   document.documentElement.classList.remove(themeClass.value);
@@ -198,13 +196,14 @@ onMounted(() => {
   align-items: center;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   z-index: 11;
-  transition: all 0.3s ease;
+  // transition: all 0.3s ease;
+  position: sticky
 }
 
 .topbar-title {
   margin-right: auto;
   font-size: 1.5rem;
-  transition: color 0.3s ease;
+  // transition: color 0.3s ease;
 }
 
 .bi-person-circle {
@@ -250,5 +249,9 @@ onMounted(() => {
 .fade-enter,
 .fade-leave-to {
   opacity: 0;
+}
+.main-content{
+  overflow-y: auto;
+  scroll-behavior: smooth;
 }
 </style>

@@ -65,7 +65,6 @@ def get_file_info(file_entry, task) -> None:
             # 发送步骤完成
             task.step_completed(file_entry['path'])
     except Exception as e:
-        print(e)
         # 发送步骤错误
         task.step_error(file_entry)
 
@@ -78,21 +77,25 @@ def file_task(real_path, taskid) -> None:
     :param real_path: 文件路径
     :param taskid: 任务id
     '''
-    with os.scandir(real_path) as entries:
-        entries_list = list(entries)
-        total_entries = len(entries_list)
-        # socket发送任务长度消息
-        task = TaskHandler(task_id=taskid, task_type='file', task_len=total_entries)
-        task.start_task()
-        for entry in entries_list:
-            # 为了序列化记录，这里需要将entry转换为dict
-            entry_dict = {
-                'stat': entry.stat(),
-                'is_file': entry.is_file(),
-                'path': entry.path
-            }
-            with ThreadPoolExecutor() as executor:
-                executor.map(lambda x: get_file_info(entry_dict, task), [None])
+    try:
+        task = TaskHandler(task_id=taskid, task_type='扫描目录')
+        with os.scandir(real_path) as entries:
+            entries_list = list(entries)
+            total_entries = len(entries_list)
+            # socket发送任务长度消息
+            task.start_task(total_entries)
+            for entry in entries_list:
+                # 为了序列化记录，这里需要将entry转换为dict
+                entry_dict = {
+                    'stat': entry.stat(),
+                    'is_file': entry.is_file(),
+                    'path': entry.path
+                }
+                with ThreadPoolExecutor() as executor:
+                    executor.map(lambda x: get_file_info(entry_dict, task), [None])
+    except FileNotFoundError:
+        task.step_error(f'{real_path} 目录不存在')
+        return None
 
 
 def get_file_type(file_path) -> str:

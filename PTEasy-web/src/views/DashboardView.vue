@@ -1,174 +1,147 @@
 <template>
-  <div class="dashboard">
-    <div class="dashboard__chart-container">
-      <div class="dashboard__chart" ref="chart"></div>
+  <div class="container flex flex-col p-6 max-h-screen rounded-md bg-white m-6 shadow-md h-5/6">
+    <div class="header py-4 px-8 bg-gray-100 flex items-center justify-between">
+      <div class="header-right flex items-center">
+        <div class="timestamps text-sm flex">
+          <div class="mr-4">最近扫描时间: {{ recentScanTime }}</div>
+          <div>上次备份时间: {{ lastBackupTime }}</div>
+        </div>
+      </div>
     </div>
-    <div class="dashboard__file-list">
-      <div class="dashboard__file-list-header">文件目录</div>
-      <ul class="dashboard__file-list-items">
-        <li v-for="file in filteredFiles" :key="file.name">
-          <i :class="getIconClass(file.type)"></i>
-          <span>{{ file.name }}</span>
-        </li>
-      </ul>
+    <div class="main flex-grow px-8 py-4 flex">
+      <div class="main-left flex flex-col w-1/2 mr-8">
+        <div class="chart flex-grow">
+          <echarts-wrapper :data="chartData"></echarts-wrapper>
+        </div>
+      </div>
+      <div class="main-right flex flex-col w-1/2">
+        <div class="table-header flex justify-between items-center mb-2">
+          <h3 class="text-lg font-semibold">种子文件夹</h3>
+          <el-button @click="importResourceFolder" size="mini">导入</el-button>
+        </div>
+        <el-table :data="seedFolders" border style="width: 100%;" class="mb-4">
+          <el-table-column label="种子文件夹" width="180" prop="name"></el-table-column>
+          <el-table-column prop="size" label="大小" width="120"></el-table-column>
+          <el-table-column prop="seeding" label="做种体积" width="120"></el-table-column>
+          <el-table-column prop="notSeeding" label="未做种体积" width="120"></el-table-column>
+          <el-table-column prop="free" label="空闲"></el-table-column>
+          <el-table-column label="操作" width="120">
+            <template v-slot="scope">
+              <el-button @click="editResourceFolder(scope.$index)" size="mini">编辑</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+        <div class="table-header flex justify-between items-center mb-2">
+          <h3 class="text-lg font-semibold">资源文件夹</h3>
+          <el-button @click="importResourceFolder" size="mini">导入</el-button>
+        </div>
+        <el-table :data="resourceFolders" border style="width: 100%;">
+          <el-table-column label="资源文件夹" width="180" prop="name"></el-table-column>
+          <el-table-column prop="size" label="大小" width="120"></el-table-column>
+          <el-table-column prop="seeding" label="做种体积" width="120"></el-table-column>
+          <el-table-column prop="notSeeding" label="未做种体积" width="120"></el-table-column>
+          <el-table-column prop="free" label="空闲"></el-table-column>
+          <el-table-column label="操作" width="120">
+            <template v-slot="scope">
+              <el-button @click="editResourceFolder(scope.$index)" size="mini">编辑</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
     </div>
   </div>
 </template>
 <script>
-import * as echarts from 'echarts';
+import StorageCapacity from "@/components/StorageCapacity.vue";
+import EchartsWrapper from "@/components/EchartsWrapper.vue";
 
 export default {
+  components: {
+    StorageCapacity,
+    EchartsWrapper,
+  },
   data() {
     return {
-      files: [
-        { name: 'index.html', type: 'html', count: 120 },
-        { name: 'style.css', type: 'css', count: 260 },
-        { name: 'app.js', type: 'js', count: 300 },
-        { name: 'data.json', type: 'json', count: 80 },
-      ],
-      activeType: 'all',
+      seedFolders: [],
+      resourceFolders: [],
+      chartData: [],
+      recentScanTime: "",
+      lastBackupTime: "",
+      totalStorage: 200,
+      usedStorage: 40
     };
   },
-  mounted() {
-    this.renderChart();
-  },
-  computed: {
-    filteredFiles() {
-      if (this.activeType === 'all') {
-        return this.files;
-      }
-      return this.files.filter(file => file.type === this.activeType);
-    },
-  },
   methods: {
-    renderChart() {
-      const chartEl = this.$refs.chart;
-      const chart = echarts.init(chartEl);
-      const option = {
-        title: {
-          text: '文件类型分布图',
-          subtext: '数据纯属虚构',
-          x: 'center',
-        },
-        tooltip: {
-          trigger: 'item',
-          formatter: '{a} <br/>{b}: {c} ({d}%)',
-        },
-        legend: {
-          orient: 'vertical',
-          left: 10,
-          data: ['html', 'css', 'js', 'json'],
-        },
-        series: [
-          {
-            name: '文件类型',
-            type: 'pie',
-            radius: ['50%', '70%'],
-            avoidLabelOverlap: false,
-            label: {
-              show: false,
-              position: 'center',
-            },
-            emphasis: {
-              label: {
-                show: true,
-                fontSize: '30',
-                fontWeight: 'bold',
-              },
-            },
-            labelLine: {
-              show: false,
-            },
-            data: [
-              { value: 120, name: 'html' },
-              { value: 260, name: 'css' },
-              { value: 300, name: 'js' },
-              { value: 80, name: 'json' },
-            ],
-          },
-        ],
+    importResourceFolder() {
+      // 导入资源文件夹并解析文件信息
+      // 示例数据，实际应用中需要替换为从文件系统获取的数据
+      const newResourceFolder = {
+        name: "资源文件夹",
+        size: "50GB",
+        seeding: "25GB",
+        notSeeding: "15GB",
+        free: "10GB"
       };
-      chart.setOption(option);
-      chart.on('click', ({ name }) => {
-        this.activeType = name;
-      });
+      this.resourceFolders.push(newResourceFolder);
     },
-    getIconClass(fileType) {
-      let iconClass = 'bi-file-earmark-text';
-      switch (fileType) {
-        case 'html':
-          iconClass = 'bi-file-earmark-code';
-          break;
-        case 'css':
-          iconClass = 'bi-file-earmark-css';
-          break;
-        case 'js':
-          iconClass = 'bi-file-earmark-code';
-          break;
-        case 'json':
-          iconClass = 'bi-file-earmark-bar-graph';
-          break;
-        default:
-          break;
-      }
-      return iconClass;
-    },
+    importSeedFolder() {
+      // 导入种子文件夹并解析文件信息
+      // 示例数据，实际应用中需要替换为从文件系统获取的数据
+      const newSeedFolder = {
+        name: "种子文件夹",
+        size: "80GB",
+        seeding: "45GB",
+        notSeeding: "25GB",
+        free: "10GB"
+      };
+      this.seedFolders.push(newSeedFolder);
+    }
   },
+  created() {
+    // 在这里填充示例数据
+    this.seedFolders = [
+      {
+        name: "种子文件夹 1",
+        size: "80GB",
+        seeding: "45GB",
+        notSeeding: "25GB",
+        free: "10GB"
+      },
+      {
+        name: "种子文件夹 2",
+        size: "120GB",
+        seeding: "70GB",
+        notSeeding: "40GB",
+        free: "10GB"
+      }
+    ];
+    this.resourceFolders = [
+      {
+        name: "资源文件夹 1",
+        size: "50GB",
+        seeding: "25GB",
+        notSeeding: "15GB",
+        free: "10GB"
+      },
+      {
+        name: "资源文件夹 2",
+        size: "100GB",
+        seeding: "60GB",
+        notSeeding: "30GB",
+        free: "10GB"
+      }
+    ];
+    // 生成随机数据
+    const randomTime = () => {
+      const hours = Math.floor(Math.random() * 24);
+      const minutes = Math.floor(Math.random() * 60);
+      return `${hours < 10 ? '0' + hours : hours}:${minutes < 10 ? '0' + minutes : minutes}`;
+    };
+    this.recentScanTime = randomTime();
+    this.lastBackupTime = randomTime();
+  }
 };
 </script>
 
-<style>
-.dashboard {
-  display: flex;
-  justify-content: space-between;
-  align-items: stretch;
-  height: 100%;
-}
-
-.dashboard__chart-container {
-  flex-basis: 50%;
-  padding: 16px;
-  box-sizing: border-box;
-}
-
-.dashboard__chart {
-  height: 100%;
-}
-
-.dashboard__file-list {
-  flex-basis: 50%;
-  padding: 16px;
-  box-sizing: border-box;
-  background-color: #f5f5f5;
-}
-
-.dashboard__file-list-header {
-  font-size: 24px;
-  font-weight: bold;
-  margin-bottom: 16px;
-}
-
-.dashboard__file-list-items {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.dashboard__file-list-items li {
-  display: flex;
-  align-items: center;
-  margin-bottom: 8px;
-  padding: 8px;
-  background-color: white;
-  border-radius: 4px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-}
-
-.dashboard__file-list-items li i {
-  margin-right: 8px;
-}
-
-.bi-file-earmark-text:before {
-  content: "\f17d";
-}
+<style scoped>
 </style>

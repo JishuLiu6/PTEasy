@@ -1,7 +1,5 @@
 import { createApp } from 'vue'
-import { createStore } from 'vuex'
 import App from './App.vue'
-
 
 // 导入tailwindcss
 import "tailwindcss/tailwind.css"
@@ -19,22 +17,14 @@ import {imgUrl} from './utils/imgUrl'
 // 导入图标
 import "bootstrap-icons/font/bootstrap-icons.css";
 
-// 导入表格
-// import Vue3EasyDataTable from 'vue3-easy-data-table';
-// import 'vue3-easy-data-table/dist/style.css';
-import fm from './store';
 
 const app = createApp(App)
-
-const store = createStore({
-    modules: { fm },
-});
 
 // 导入自定义弹框
 import CustomeDialog from "./components/CustomeDialog.vue";
 
 app.component("pt-dialog", CustomeDialog);
-
+import store from './store'; // 导入 store
 app.use(store)
 app.use(router)
 // app.component('EasyDataTable', Vue3EasyDataTable);

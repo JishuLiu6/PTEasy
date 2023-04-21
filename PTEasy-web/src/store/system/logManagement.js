@@ -1,55 +1,54 @@
-// store/modules/system/logManagement.js
+import GET from '@/api/get';
 
-// 导出 logManagement 子模块
 export default {
-    namespaced: true,
-    state: {
-      logs: [] // 存储日志数据
+  namespaced: true,
+  state: {
+    logs: [],
+    page: 1,
+    size: 10,
+    totalCount: 0
+  },
+  mutations: {
+    addLog(state, log) {
+      state.logs.push(log);
     },
-    mutations: {
-      // 添加日志
-      addLog(state, log) {
-        state.logs.push(log);
-      },
-      // 删除日志
-      removeLog(state, logIndex) {
-        state.logs.splice(logIndex, 1);
-      },
-      // 清空日志
-      clearLogs(state) {
-        state.logs = [];
-      }
+    removeLog(state, logIndex) {
+      state.logs.splice(logIndex, 1);
     },
-    actions: {
-      // 接收后端发送的日志数据
-      receiveLog({ commit }, log) {
-        commit('addLog', log);
-      },
-      // 删除日志
-      deleteLog({ commit }, logIndex) {
-        commit('removeLog', logIndex);
-      },
-      // 清空日志
-      clearLogs({ commit }) {
-        commit('clearLogs');
-      },
-      // 从后端获取日志数据的逻辑
-      async fetchData({ commit }) {
-        // const response = await axios.get('/api/logs');
-        // commit('setLogs', response.data);
-  
-        // 示例代码
-        const logs = await new Promise((resolve) => {
-          setTimeout(() => {
-            resolve([{ id: 1, message: 'Sample log message' }]);
-          }, 1000);
+    clearLogs(state) {
+      state.logs = [];
+    },
+    // 添加 setLogs mutation
+    setLogs(state, logs) {
+      state.logs = logs;
+    },
+    setTotalCount(state, totalCount) {
+      state.totalCount = totalCount;
+    },
+  },
+  actions: {
+    receiveLog({ commit }, log) {
+      commit('addLog', log);
+    },
+    deleteLog({ commit }, logIndex) {
+      commit('removeLog', logIndex);
+    },
+    clearLogs({ commit }) {
+      commit('clearLogs');
+    },
+    async fetchData({ commit, state }) { 
+      GET.logsList({ page: state.page, size: state.size }) 
+        .then((r) => {
+          var { data_list, total_count } = r.data.data;
+          commit('setLogs', data_list); // 日志数据
+          commit('setTotalCount', total_count); // 日志志总数
+        })
+        .catch((error) => {
+          console.log(error);
         });
-        commit('setLogs', logs);
-      },
     },
-    getters: {
-      // 获取日志数据
-      logs: (state) => state.logs
-    }
-  };
-  
+  },
+  getters: {
+    logs: (state) => state.logs,
+  },
+};
