@@ -1,21 +1,21 @@
 <template>
-  <div class="container flex flex-col p-6 max-h-screen rounded-md bg-white m-6 shadow-md h-5/6">
-    <div class="header py-4 px-8 bg-gray-100 flex items-center justify-between">
-      <div class="header-right flex items-center">
-        <div class="timestamps text-sm flex">
+  <div class="flex flex-col p-6 max-h-screen rounded-md bg-white m-6 shadow-md h-5/6">
+    <div class="py-4 px-8 bg-gray-100 flex items-center justify-between">
+      <div class="flex items-center">
+        <div class="text-sm flex">
           <div class="mr-4">最近扫描时间: {{ recentScanTime }}</div>
           <div>上次备份时间: {{ lastBackupTime }}</div>
         </div>
       </div>
     </div>
-    <div class="main flex-grow px-8 py-4 flex">
-      <div class="main-left flex flex-col w-1/2 mr-8">
-        <div class="chart flex-grow">
+    <div class="l-block-shadow flex-grow rounded-lg p-4">
+      <div class="flex flex-col w-1/2 mr-8">
+        <div class="flex-grow">
           <echarts-wrapper :data="chartData"></echarts-wrapper>
         </div>
       </div>
-      <div class="main-right flex flex-col w-1/2">
-        <div class="table-header flex justify-between items-center mb-2">
+      <div class="flex flex-col w-1/2">
+        <div class="flex justify-between items-center mb-2">
           <h3 class="text-lg font-semibold">种子文件夹</h3>
           <el-button @click="importResourceFolder" size="mini">导入</el-button>
         </div>
@@ -31,7 +31,7 @@
             </template>
           </el-table-column>
         </el-table>
-        <div class="table-header flex justify-between items-center mb-2">
+        <div class="flex justify-between items-center mb-2">
           <h3 class="text-lg font-semibold">资源文件夹</h3>
           <el-button @click="importResourceFolder" size="mini">导入</el-button>
         </div>

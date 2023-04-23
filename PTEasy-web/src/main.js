@@ -22,10 +22,28 @@ const app = createApp(App)
 
 // 导入自定义弹框
 import CustomeDialog from "./components/CustomeDialog.vue";
-
 app.component("pt-dialog", CustomeDialog);
-import store from './store'; // 导入 store
+
+// 导入 store
+import store from './store'; 
 app.use(store)
+
+// 使用自定义插件
+import { io } from 'socket.io-client';
+import socketManager from "./store/socketManager";
+let socketManagerInstance = null; // 记录 socketManager 实例是否已存在
+if (!socketManagerInstance) {
+  const socket = io('http://127.0.0.1:8999',{
+    autoConnect: true,
+    reconnection: true,
+    reconnectionAttempts: Infinity,
+    reconnectionDelay: 1000,
+    reconnectionDelayMax: 5000,
+  });
+  socketManagerInstance = socketManager(socket);
+}
+app.provide('socketManager', socketManagerInstance);
+
 app.use(router)
 // app.component('EasyDataTable', Vue3EasyDataTable);
 app.use(ElementPlus)

@@ -18,19 +18,19 @@
         <div class="flex items-center space-x-8 ml-auto">
           <el-popover placement="bottom" :width="250" trigger="hover" style="--el-popover-padding: 0">
             <template #reference>
-              <i class="bi bi-gear-fill mr-4 text-2xl" :class="hasActiveTasks ? 'text-primary' : 'text-default'"
-                @click="handleRouteClick('logs')"></i>
+              <i class="bi bi-gear-fill mr-4 text-2xl" :class="hasActiveTasks ? 'scale' : 'text-default'"></i>
             </template>
             <div class="rounded-lg bg-white shadow-md py-3 px-2">
               <div class="text-lg font-semibold text-gray-600 mb-2 border-b border-gray-300 pb-2">活动</div>
-              <div v-for="(item, index) in activityList" :key="index"
-                class="border-gray-300 cursor-pointer p-4 hover:bg-gray-100">
-                <div class="text-xs text-gray-600">{{ item.title }}</div>
-                <div class="text-xs text-gray-500">{{ item.path }}</div>
-                <div>
-                  <el-progress :percentage="item.percentage" :color="item.color"></el-progress>
+              <template v-for="(item, index) in tasks" :key="index">
+                <div v-if="item.progress / item.task_len !== 1"
+                  class="border-gray-300 cursor-pointer p-4 hover:bg-gray-100">
+                  <div class="text-xs text-gray-500">任务：{{ item.name }}</div>
+                  <div>
+                    <el-progress :percentage="Math.round((item.progress / item.task_len) * 100)"></el-progress>
+                  </div>
                 </div>
-              </div>
+              </template>
             </div>
           </el-popover>
 
@@ -43,8 +43,8 @@
               <div class="grid grid-cols-1 gap-2">
                 <div v-for="(theme, index) in themes" :key="index"
                   class="flex items-center cursor-pointer py-2 px-3 rounded-lg hover:bg-gray-100" :class="[{ 'bg-gray-100': themeClass === theme.name },
-                  { 'text-gray-800': themeClass === theme.name },
-                  { 'opacity-70': themeClass !== theme.name }]" @click="changeTheme(theme.name)">
+                    { 'text-gray-800': themeClass === theme.name },
+                    { 'opacity-70': themeClass !== theme.name }]" @click="changeTheme(theme.name)">
                   <div class="w-6 h-6 rounded-full mr-2 border border-gray-400" :class="'bg-' + theme.color"></div>
                   <div class="text-sm font-medium">{{ theme.name.slice(6) }}</div>
                 </div>
@@ -54,47 +54,29 @@
         </div>
       </div>
       <div class="main-content h-full">
-          <transition name="fade" mode="out-in">
-            <router-view />
-          </transition>
+        <transition name="fade" mode="out-in">
+          <router-view />
+        </transition>
       </div>
     </div>
   </div>
 </template>
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, computed, onUnmounted } from 'vue';
 import { router } from './router';
+import { useStore } from "vuex";
 
 const sidebarRoutes = ref([]);
-
 const themeClass = ref(localStorage.getItem('themeClass') || 'theme-red');
+const store = useStore();
+const tasks = computed(() => store.state.activeTasks.tasks);
+const hasActiveTasks = computed(() => store.getters['activeTasks/hasActiveTasks']);
 
 const themes = ref([
   { name: 'theme-red', color: 'red' },
   { name: 'theme-orange', color: 'orange' },
   { name: 'theme-green', color: 'green' }
 ]);
-
-const activityList = ref([
-  {
-    name: '扫描文件夹',
-    path: '/Users/jishuliu/SMSBoom',
-    percentage: Math.floor(Math.random() * 101),
-    color: 'primary'
-  },
-  {
-    name: '上传文件',
-    path: '/Users/jishuliu/Documents/Resume',
-    percentage: Math.floor(Math.random() * 101),
-    color: 'success'
-  },
-  {
-    name: '下载文件',
-    path: '/Users/jishuliu/Documents/Notes',
-    percentage: Math.floor(Math.random() * 101),
-    color: 'warning'
-  }
-])
 
 const changeTheme = (newTheme) => {
   document.documentElement.classList.remove(themeClass.value);
@@ -113,8 +95,13 @@ onMounted(() => {
   sidebarRoutes.value = router.options.routes.filter(
     (route) => !route.meta.hideSidebar
   );
-});
+  store.dispatch("activeTasks/initSocket");
+  store.dispatch("activeTasks/fetchData");
 
+});
+onUnmounted(() => {
+  store.dispatch("activeTasks/closeSocket");
+});
 </script>
 <style lang="scss">
 @import './assets/scss/main.scss';
@@ -250,8 +237,25 @@ onMounted(() => {
 .fade-leave-to {
   opacity: 0;
 }
-.main-content{
+
+.main-content {
   overflow-y: auto;
   scroll-behavior: smooth;
+}
+
+.scale {
+  animation: scale 1s infinite alternate;
+  animation: rotate 2s infinite linear;
+}
+
+@keyframes scale {
+  from {
+    transform: rotate(0deg);
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.2);
+    transform: rotate(360deg);
+  }
 }
 </style>

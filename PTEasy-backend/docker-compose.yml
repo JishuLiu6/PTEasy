@@ -3,7 +3,7 @@ version: "3.9"
 services:
   app:
     build: .
-    command: gunicorn -k geventwebsocket.gunicorn.workers.GeventWebSocketWorker -w 1 main:app --bind 0.0.0.0:8999 --reload
+    command: gunicorn -k geventwebsocket.gunicorn.workers.GeventWebSocketWorker --timeout 60 -w 1 main:app --bind 0.0.0.0:8999 #--reload
     volumes:
       - .:/root/backend
       - /Users/jishuliu/Desktop:/root/desktop

@@ -1,13 +1,13 @@
 import os
 import uuid
-from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor
+from concurrent.futures import ThreadPoolExecutor
 
 from flask import jsonify, request
-from app.libs.x_disk import get_size, get_file_type, file_task
+from app.libs.x_disk import file_task
 from app.libs.redprint import Redprint
 tasks = {}
 redprint = Redprint('local')
-executor = ProcessPoolExecutor(max_workers=4)
+executor = ThreadPoolExecutor(max_workers=4)
 
 @redprint.route('/list', methods=['POST'])
 def directory_list():

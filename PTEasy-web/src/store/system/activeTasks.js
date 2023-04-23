@@ -1,54 +1,81 @@
-// 导出 activeTasks 子模块
+
+import GET from '@/api/get';
+import { inject } from "vue";
+
 export default {
     namespaced: true,
     state: {
-      tasks: [] // 存储正在运行的任务列表
+      tasks: [], // 存储正在运行的任务列表
+      page: 1,
+      size: 10,
+      totalCount: 0,
+      socketListeners: [
+        {
+          event: 'task:add',
+          mutation: 'addTask',
+        },
+        {
+          event: 'task:update',
+          mutation: 'updateTaskStatus',
+        }
+      ]
     },
     mutations: {
       // 添加任务
       addTask(state, task) {
-        state.tasks.push(task);
+        console.log(task)
+        state.tasks.unshift(task);
+        state.totalCount += 1;
+  
+        if (state.tasks.length > state.size) {
+          state.tasks.pop();
+        }
       },
       // 删除任务
       removeTask(state, taskIndex) {
         state.tasks.splice(taskIndex, 1);
       },
       // 更新任务状态
-      updateTaskStatus(state, { taskIndex, status }) {
-        state.tasks[taskIndex].status = status;
+      updateTaskStatus(state, updatedTask) {
+        const taskIndex = state.tasks.findIndex(task => task.task_id === updatedTask.task_id);
+        console.log(updatedTask, taskIndex)
+        if (taskIndex !== -1) {
+          Object.assign(state.tasks[taskIndex], updatedTask);
+        }
+      },
+      setTasks(state, tasks) {
+        state.tasks = tasks;
+      },
+      setTotalCount(state, totalCount) {
+        state.totalCount = totalCount;
       }
     },
     actions: {
-      // 添加任务
-      addTask({ commit }, task) {
-        commit('addTask', task);
+      initSocket({ commit, state}) {
+        const socketManager = inject("socketManager");
+        socketManager.initListeners(commit, state.socketListeners);
       },
-      // 删除任务
-      deleteTask({ commit }, taskIndex) {
-        commit('removeTask', taskIndex);
-      },
-      // 更新任务状态
-      updateTaskStatus({ commit }, payload) {
-        commit('updateTaskStatus', payload);
+      closeSocket({ commit, state}) {
+        const socketManager = inject("socketManager");
+        socketManager.closeListeners(commit, state.socketListeners);
       },
       // 从后端获取正在运行的任务数据的逻辑
-      async fetchData({ commit }) {
-
-        // const response = await axios.get('/api/activeTasks');
-        // commit('setTasks', response.data);
-  
-        // 示例代码
-        const tasks = await new Promise((resolve) => {
-          setTimeout(() => {
-            resolve([{ id: 1, name: 'Sample task', status: 'running' }]);
-          }, 1000);
-        });
-        commit('setTasks', tasks);
+      async fetchData({ commit, state }) { 
+        GET.taskList({ page: state.page, size: state.size }) 
+          .then((r) => {
+            var { data_list, total_count } = r.data.data;
+            commit('setTasks', data_list);
+            commit('setTotalCount', total_count);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
       },
     },
     getters: {
       // 获取任务列表
-      tasks: (state) => state.tasks
+      tasks: (state) => state.tasks,
+      hasActiveTasks: (state) => state.tasks.some(task => task.progress / task.task_len !== 1)
     }
   };
   

@@ -46,7 +46,7 @@
 </template>
 
 <script>
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, onUnmounted } from "vue";
 import { useStore } from "vuex";
 import helper from "@/mixins/helper.js";
 
@@ -61,9 +61,8 @@ export default {
     });
     const size = computed(() => store.state.logManagement.size);
     const totalCount = computed(() => store.state.logManagement.totalCount);
-
-    const fetchData = () => store.dispatch("logManagement/fetchData");
-
+    
+    
     const isEmpty = ref(false); // 根据实际数据设置是否为空
 
     function tagType(level) {
@@ -98,11 +97,16 @@ export default {
 
     function handlePageChange(newPage) {
       page.value = newPage;
-      fetchData();
+      store.dispatch("logManagement/fetchData");
     }
 
     onMounted(() => {
-      fetchData();
+      store.dispatch("logManagement/initSocket");
+      store.dispatch("logManagement/fetchData");
+    });
+
+    onUnmounted(() => {
+      store.dispatch("logManagement/closeSocket");
     });
 
     return {

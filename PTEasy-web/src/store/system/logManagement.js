@@ -1,4 +1,5 @@
 import GET from '@/api/get';
+import { inject } from "vue";
 
 export default {
   namespaced: true,
@@ -6,11 +7,22 @@ export default {
     logs: [],
     page: 1,
     size: 10,
-    totalCount: 0
+    totalCount: 0,
+    socketListeners: [
+      {
+        event: 'log',
+        mutation: 'addLog',
+      }
+    ]
   },
   mutations: {
     addLog(state, log) {
-      state.logs.push(log);
+      state.logs.unshift(log);
+      state.totalCount += 1;
+
+      if (state.logs.length > state.size) {
+        state.logs.pop();
+      }
     },
     removeLog(state, logIndex) {
       state.logs.splice(logIndex, 1);
@@ -27,17 +39,16 @@ export default {
     },
   },
   actions: {
-    receiveLog({ commit }, log) {
-      commit('addLog', log);
+    initSocket({ commit, state}) {
+      const socketManager = inject("socketManager");
+      socketManager.initListeners(commit, state.socketListeners);
     },
-    deleteLog({ commit }, logIndex) {
-      commit('removeLog', logIndex);
+    closeSocket({ commit, state}) {
+      const socketManager = inject("socketManager");
+      socketManager.closeListeners(commit, state.socketListeners);
     },
-    clearLogs({ commit }) {
-      commit('clearLogs');
-    },
-    async fetchData({ commit, state }) { 
-      GET.logsList({ page: state.page, size: state.size }) 
+    async fetchData({ commit, state }) {
+      GET.logsList({ page: state.page, size: state.size })
         .then((r) => {
           var { data_list, total_count } = r.data.data;
           commit('setLogs', data_list); // 日志数据
