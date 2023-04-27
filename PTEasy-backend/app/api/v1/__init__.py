@@ -1,11 +1,10 @@
-from flask import Blueprint
-from app.api.v1 import local, logs, task
-from .file_socket import *
+from fastapi import APIRouter
+from app.api.v1.file import file_router
+from app.api.v1.logs import logs_router
+from app.api.v1.task import task_router
 
+v1_router = APIRouter()
 
-def create_blueprint_v1():
-    bp = Blueprint('v1', __name__, url_prefix='/v1')
-    local.redprint.register(bp)
-    logs.redprint.register(bp)
-    task.redprint.register(bp)
-    return bp
+v1_router.include_router(file_router, prefix="/file")
+v1_router.include_router(task_router, prefix="/task")
+v1_router.include_router(logs_router, prefix="/logs")

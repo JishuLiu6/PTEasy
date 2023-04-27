@@ -68,7 +68,7 @@ export default {
       recentScanTime: "",
       lastBackupTime: "",
       totalStorage: 200,
-      usedStorage: 40
+      usedStorage: 40,
     };
   },
   methods: {

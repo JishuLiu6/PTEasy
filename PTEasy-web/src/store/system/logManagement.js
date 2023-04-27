@@ -41,6 +41,7 @@ export default {
   actions: {
     initSocket({ commit, state}) {
       const socketManager = inject("socketManager");
+      console.log(socketManager, state.socketListeners)
       socketManager.initListeners(commit, state.socketListeners);
     },
     closeSocket({ commit, state}) {
@@ -60,6 +61,6 @@ export default {
     },
   },
   getters: {
-    logs: (state) => state.logs,
+    logs: (state) => state.logs
   },
 };

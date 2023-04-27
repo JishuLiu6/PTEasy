@@ -9,9 +9,6 @@ from app.config.setting import DATABASE_URL, ECHO, CHECK_SAME_THREAD, POOL_SIZE,
 engine = create_engine(
     url=DATABASE_URL,
     echo=ECHO,
-    connect_args={
-        'check_same_thread': CHECK_SAME_THREAD
-    },
     pool_size=POOL_SIZE,
     max_overflow=MAX_OVERFLOW
 )

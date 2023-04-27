@@ -4,6 +4,10 @@
       <el-input class="flex-grow w-full md:w-1/4" placeholder="搜索日志"></el-input>
     </div>
 
+    <div>
+    <el-input v-model="path" placeholder="目录"></el-input>
+    <el-button type="danger" @click="sendPathTask">发送</el-button>
+  </div>
     <div class="l-block-shadow flex-grow rounded-lg p-4" style="height: 65vh">
       <el-table v-if="!isEmpty" :data="logs" max-height="60vh" empty-text="没有日志记录">
         <el-table-column prop="task_type" label="日志类型" max-width="150">
@@ -15,7 +19,6 @@
         </el-table-column>
         <el-table-column label="日志内容" min-width="300">
           <template v-slot="{ row }">
-
             <el-tooltip :content="row.message" placement="top">
               <div :style="{
                 'color': row.level === 0 ? 'var(--el-color-info)' :
@@ -46,13 +49,15 @@
 </template>
 
 <script>
-import { ref, computed, onMounted, onUnmounted } from "vue";
+import { ref, computed, onMounted, onUnmounted, inject} from "vue";
 import { useStore } from "vuex";
 import helper from "@/mixins/helper.js";
 
 export default {
   mixins: [helper],
   setup() {
+    const path = ref("");
+    const socketManager = inject("socketManager");
     const store = useStore();
     const logs = computed(() => store.state.logManagement.logs);
     const page = computed({
@@ -64,6 +69,12 @@ export default {
     
     
     const isEmpty = ref(false); // 根据实际数据设置是否为空
+
+    function sendPathTask(){
+      console.log(path.value)
+      socketManager.sendMessage('path', path.value)
+      // console.log(socketManager)
+    }
 
     function tagType(level) {
       switch (level) {
@@ -110,6 +121,7 @@ export default {
     });
 
     return {
+      path,
       logs,
       page,
       size,
@@ -119,6 +131,7 @@ export default {
       tagContent,
       handlePageChange,
       timestampToDate: helper.methods.timestampToDate,
+      sendPathTask
     };
   },
 };

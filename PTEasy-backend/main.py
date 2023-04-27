@@ -1,4 +1,6 @@
-from app import app
+from fastapi import FastAPI
+from app.api.v1 import v1_router
 
-if __name__ == "__main__":
-    app.run(port=9999, host="0.0.0.0")
+app = FastAPI()
+
+app.include_router(v1_router, prefix="/v1")

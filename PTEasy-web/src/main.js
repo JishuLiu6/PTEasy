@@ -29,18 +29,11 @@ import store from './store';
 app.use(store)
 
 // 使用自定义插件
-import { io } from 'socket.io-client';
+// import { io } from 'socket.io-client';
 import socketManager from "./store/socketManager";
 let socketManagerInstance = null; // 记录 socketManager 实例是否已存在
 if (!socketManagerInstance) {
-  const socket = io('http://127.0.0.1:8999',{
-    autoConnect: true,
-    reconnection: true,
-    reconnectionAttempts: Infinity,
-    reconnectionDelay: 1000,
-    reconnectionDelayMax: 5000,
-  });
-  socketManagerInstance = socketManager(socket);
+  socketManagerInstance = socketManager('ws://127.0.0.1:8999/v1/task/ws');
 }
 app.provide('socketManager', socketManagerInstance);
 

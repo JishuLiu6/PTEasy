@@ -3,9 +3,22 @@ version: "3.9"
 services:
   app:
     build: .
-    command: gunicorn -k geventwebsocket.gunicorn.workers.GeventWebSocketWorker --timeout 60 -w 1 main:app --bind 0.0.0.0:8999 #--reload
+    command: uvicorn main:app --host 0.0.0.0 --port 8999 --reload
     volumes:
       - .:/root/backend
       - /Users/jishuliu/Desktop:/root/desktop
     ports:
       - "8999:8999"
+    depends_on:
+      - mysql
+
+  mysql:
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: mydatabase
+      MYSQL_ROOT_PASSWORD: 123456
+    volumes:
+      - ./mysql_data:/var/lib/mysql
+    ports:
+      - "3306:3306"

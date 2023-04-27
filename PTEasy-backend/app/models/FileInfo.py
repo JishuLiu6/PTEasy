@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, BigInteger
 from app.models.Base import DbBase
 
 
@@ -11,13 +11,13 @@ class FileInfo(DbBase):
     soft_path = Column(String(255), nullable=False)  # 软路径
     file_name = Column(String(255), nullable=False)  # 文件名
     file_size = Column(Integer, nullable=False)  # 文件大小
-    visit_time = Column(Integer, nullable=False)  # 访问时间
-    last_visit_time = Column(Integer)  # 上次访问时间
-    modify_time = Column(Integer, nullable=False)  # 修改时间
-    last_modify_time = Column(Integer)  # 上次修改时间
-    file_id = Column(Integer, nullable=False)  # 文件id
+    visit_time = Column(BigInteger, nullable=False)  # 访问时间
+    last_visit_time = Column(BigInteger)  # 上次访问时间
+    modify_time = Column(BigInteger, nullable=False)  # 修改时间
+    last_modify_time = Column(BigInteger)  # 上次修改时间
+    file_id = Column(BigInteger, nullable=False)  # 文件id
     parent_id = Column(Integer, nullable=False)  # 目录id
-    file_type = Column(String(10), nullable=False)  # 文件类型
+    file_type = Column(String(255), nullable=False)  # 文件类型
     is_delete = Column(Integer, nullable=False, default=0)  # 是否已经删除
 
 

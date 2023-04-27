@@ -1,18 +1,16 @@
 # 第一阶段：构建
 FROM python:3.9-alpine AS builder
 
-# 安装 gevent 构建所需的依赖项
-RUN apk add --no-cache --virtual .build-deps \
-    gcc \
-    musl-dev \
-    python3-dev \
+
+RUN apk update && \
+    apk add --no-cache \
+    build-base \
     libffi-dev \
-    openssl-dev \
-    make
+    openssl-dev
 
 WORKDIR /root/backend
-COPY requirements .
-RUN pip install --no-cache-dir --user -r requirements -i https://pypi.douban.com/simple
+COPY requirements.txt .
+RUN pip install --no-cache-dir --user -r requirements.txt -i https://pypi.douban.com/simple
 COPY . .
 
 # 第二阶段：运行时
@@ -30,4 +28,5 @@ COPY --from=builder /root/backend /root/backend
 WORKDIR /root/backend
 
 #CMD gunicorn main:app --bind 0.0.0.0:8999
-CMD gunicorn -k geventwebsocket.gunicorn.workers.GeventWebSocketWorker -w 1 main:app --bind 0.0.0.0:8999
+CMD uvicorn main:app --host 0.0.0.0 --port 8999
+

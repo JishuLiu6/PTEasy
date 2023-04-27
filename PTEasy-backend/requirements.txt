@@ -1,0 +1,7 @@
+bencoding==0.2.6
+fastapi==0.95.0
+SQLAlchemy==2.0.7
+synology_api==0.6.2
+uvicorn[standard]==0.21.1
+PyMySQL==1.0.3
+cryptography==40.0.2
