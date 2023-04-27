@@ -2,8 +2,9 @@ import mimetypes
 import os
 import time
 from concurrent.futures import ThreadPoolExecutor
-from app.libs.task_handler import TaskHandler
+from app.libs.task_handler import TaskHandler, LogLevel
 from concurrent.futures import as_completed
+
 SCRIPT_EXTENSIONS = [
     '.py', '.js', '.sh', '.rb', '.php', '.java', '.c', '.cpp', '.cs', '.go',
     '.scala', '.rs', '.swift', '.kt', '.hs', '.f', '.erl', '.r', '.pl', '.m',
@@ -43,6 +44,7 @@ MIME_PREFIX_MAPPING = {
     'audio': 'audio',
 }
 
+
 def get_size(path, task) -> int:
     if os.path.isfile(path):
         total_size = os.path.getsize(path)
@@ -52,20 +54,20 @@ def get_size(path, task) -> int:
             for filename in filenames:
                 try:
                     filepath = os.path.join(dirpath, filename)
-                    total_size += os.path.getsize(filepath)
+                    filesize = os.path.getsize(filepath)
+                    total_size += filesize
                 except FileNotFoundError:
                     continue
                 except PermissionError:
-                    task.step_error(f'{filepath} 文件夹没有权限')
+                    task.step(LogLevel.WARNING, f'{filepath} 文件夹没有权限')
                     continue
     else:
         total_size = 0
-    task.step_info(f'{path} 文件大小为 {total_size} 字节')
     return total_size
 
 
 def get_file_info(file_entry, task) -> None:
-    task.step_start(file_entry['path'])
+    task.step(LogLevel.INFO, f'开始处理 {file_entry["path"]}')
     try:
         sub_filepath_info = file_entry['stat']
         if file_entry['is_file']:
@@ -87,12 +89,12 @@ def get_file_info(file_entry, task) -> None:
                          'modify_time': mtime,
                          'file_id': sub_filepath_info.st_ino,
                          'parent_id': os.stat(os.path.dirname(file_entry['path'])).st_ino})
-        task.step_completed(file_entry['path'])
+        task.step(LogLevel.SUCCESS, f'处理 {file_entry["path"]} 完成')
     except FileNotFoundError:
-        task.step_error(f'{file_entry["path"]} 目录不存在')
+        task.step(LogLevel.ERROR, f'{file_entry["path"]} 文件不存在')
         return None
     except Exception as e:
-        task.step_error(f'在处理 {file_entry["path"]} 时发生错误: {str(e)}')
+        task.step(LogLevel.ERROR, f'在处理 {file_entry["path"]} 时发生错误: {str(e)}')
         return None
 
 
@@ -102,14 +104,8 @@ def file_task(real_path, taskid, thread_pool_size=5) -> None:
         with os.scandir(real_path) as entries:
             entries_list = list(entries)
             total_entries = len(entries_list)
-            task.start_task(total_entries)
-            # for entry in entries_list:
-            #     entry_dict = {
-            #         'stat': entry.stat(),
-            #         'is_file': entry.is_file(),
-            #         'path': entry.path
-            #     }
-            #     get_file_info(entry_dict, task)
+
+            task.step(LogLevel.SUCCESS, f'扫描到 {total_entries} 个文件, 开始任务', task_len=total_entries)
             with ThreadPoolExecutor(max_workers=thread_pool_size) as executor:
                 futures = []
                 for entry in entries_list:
@@ -125,12 +121,12 @@ def file_task(real_path, taskid, thread_pool_size=5) -> None:
                     try:
                         future.result()
                     except Exception as e:
-                        task.step_error(str(e))
+                        task.step(LogLevel.ERROR, f'任务执行失败: {str(e)}')
     except FileNotFoundError:
-        task.step_error(f'{real_path} 目录不存在')
+        task.step(LogLevel.ERROR, f'{real_path} 目录不存在')
         return None
     except Exception as e:
-        task.step_error(f'在处理 {real_path} 时发生错误: {str(e)}')
+        task.step(LogLevel.ERROR, f'在处理 {real_path} 时发生错误: {str(e)}')
         return None
 
 

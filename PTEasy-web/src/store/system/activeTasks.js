@@ -23,7 +23,6 @@ export default {
     mutations: {
       // 添加任务
       addTask(state, task) {
-        console.log(task)
         state.tasks.unshift(task);
         state.totalCount += 1;
   
@@ -38,7 +37,6 @@ export default {
       // 更新任务状态
       updateTaskStatus(state, updatedTask) {
         const taskIndex = state.tasks.findIndex(task => task.task_id === updatedTask.task_id);
-        console.log(updatedTask, taskIndex)
         if (taskIndex !== -1) {
           Object.assign(state.tasks[taskIndex], updatedTask);
         }

@@ -1,24 +1,27 @@
 import os
+import asyncio
 import uuid
-from concurrent.futures import ThreadPoolExecutor
-
 from flask import jsonify, request
-from app.libs.x_disk import file_task
+from concurrent.futures import ThreadPoolExecutor
+from app.libs.disk_scanner import file_task
 from app.libs.redprint import Redprint
+
 tasks = {}
+executor = ThreadPoolExecutor(max_workers=5)
 redprint = Redprint('local')
-executor = ThreadPoolExecutor(max_workers=4)
 
 @redprint.route('/list', methods=['POST'])
 def directory_list():
     rq_data = request.json
 
     taskid = str(uuid.uuid4())
-    executor.submit(file_task, rq_data['path'], taskid, thread_pool_size=3)
+    # file_task(rq_data['path'], taskid, thread_pool_size=5)
+    # asyncio.create_task(file_task(rq_data['path'], taskid, thread_pool_size=5))
+
+    future = executor.submit(file_task, rq_data['path'], taskid, thread_pool_size=5)
     # tasks[taskid] = future
 
     return jsonify({'errno': 1, 'data': "任务已经开始执行", 'task_id': taskid})
-
 
 @redprint.route('/status', methods=['GET'])
 def task_status():

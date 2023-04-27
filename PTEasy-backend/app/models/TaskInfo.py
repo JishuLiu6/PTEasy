@@ -1,6 +1,13 @@
+from enum import Enum
 from sqlalchemy import Column, Integer, String
-from sqlalchemy.orm import relationship
 from app.models.Base import DbBase
+
+
+class TaskStatus(Enum):
+    NOT_STARTED = 0
+    IN_PROGRESS = 1
+    COMPLETED = 2
+    CANCELED = 3
 
 
 class TaskInfo(DbBase):
@@ -14,7 +21,7 @@ class TaskInfo(DbBase):
     type = Column(Integer, nullable=False)  # 任务类型
     task_len = Column(Integer, nullable=False)  # 任务长度
     progress = Column(Integer, nullable=False)  # 任务进度
-    status = Column(Integer, nullable=False)  # 任务状态 0:未开始 1:进行中 2:已完成 3:已取消
+    status = Column(Integer, nullable=False, default=TaskStatus.NOT_STARTED.value)  # 任务状态 0:未开始 1:进行中 2:已完成 3:已取消
     start_time = Column(Integer, nullable=False)  # 任务开始时间
     end_time = Column(Integer, nullable=False)  # 任务结束时间
     update_time = Column(Integer, nullable=False)  # 任务更新时间
