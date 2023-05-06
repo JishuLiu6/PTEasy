@@ -1,9 +1,11 @@
 import asyncio
 import mimetypes
+import traceback
+
+import aiofiles
 import os
-import time
-from app.libs.task_helper import TaskHandler, LogLevel
-from typing import List, Dict
+from app.libs.log_utils import XLog
+from app.libs.task_helper import LogLevel
 
 SCRIPT_EXTENSIONS = [
     '.py', '.js', '.sh', '.rb', '.php', '.java', '.c', '.cpp', '.cs', '.go',
@@ -45,12 +47,41 @@ MIME_PREFIX_MAPPING = {
 }
 
 
+async def async_scandir(path):
+    def sync_scandir():
+        return list(os.scandir(path))
+
+    return await asyncio.to_thread(sync_scandir)
+
+
+async def async_walk(path: str):
+    entries = await async_scandir(path)
+    dirs, files = [], []
+
+    for entry in entries:
+        if entry.is_file():
+            files.append(entry.path)
+        elif entry.is_dir():
+            dirs.append(entry.path)
+        else:
+            continue
+
+    yield path, dirs, files
+
+    for directory in dirs:
+        async for x in async_walk(directory):
+            yield x
+
+
 async def get_size(path, task) -> int:
+    # print(path, os.path.isfile(path), os.path.isdir(path))
     if os.path.isfile(path):
         total_size = os.path.getsize(path)
     elif os.path.isdir(path):
+        # print(async_walk(path))
         total_size = 0
-        for dirpath, _, filenames in os.walk(path):
+        async for dirpath, _, filenames in async_walk(path):
+            # print(dirpath, _, filenames)
             for filename in filenames:
                 try:
                     filepath = os.path.join(dirpath, filename)
@@ -70,15 +101,13 @@ async def get_file_info(file_entry, task) -> None:
     await task.step(LogLevel.INFO, f'开始处理 {file_entry["path"]}')
     try:
         sub_filepath_info = file_entry['stat']
+
         if file_entry['is_file']:
             file_type = get_file_type(file_entry['path'])
             file_size = os.path.getsize(file_entry['path'])
         else:
             file_type = "dir"
             file_size = await get_size(file_entry['path'], task)
-
-        # atime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(sub_filepath_info.st_atime))
-        # mtime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(sub_filepath_info.st_mtime))
 
         from app.models.FileInfo import FileInfo
         FileInfo.create({'soft_path': file_entry['path'],
@@ -94,13 +123,13 @@ async def get_file_info(file_entry, task) -> None:
         await task.step(LogLevel.ERROR, f'{file_entry["path"]} 文件不存在')
         return None
     except Exception as e:
+        # traceback.print_exc()
         await task.step(LogLevel.ERROR, f'在处理 {file_entry["path"]} 时发生错误: {str(e)}')
         return None
 
 
-async def file_task(real_path, taskid, websocket=None, concurrency_limit=5) -> None:
+async def file_task(real_path, task, concurrency_limit=5) -> None:
     try:
-        task = TaskHandler(task_id=taskid, task_type='扫描目录', task_name=real_path, websocket=websocket)
         with os.scandir(real_path) as entries:
             entries_list = list(entries)
             total_entries = len(entries_list)
@@ -156,8 +185,12 @@ def get_file_type(file_path) -> str:
 
 if __name__ == '__main__':
     import uuid
+    from app.libs.task_helper import TaskProcessor
 
     taskid = str(uuid.uuid4())
     real_path = '/Users/jishuliu/Desktop'
     concurrency_limit = 10
-    asyncio.run(file_task(real_path, taskid, None, concurrency_limit))
+    message_queue = asyncio.Queue()
+    task_processor = TaskProcessor(task_id=taskid, task_type='file_task', task_name='File Task',
+                                   websocket=None, message_queue=message_queue)
+    asyncio.run(file_task(real_path, task_processor))

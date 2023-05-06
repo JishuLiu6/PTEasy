@@ -61,47 +61,63 @@
     </div>
   </div>
 </template>
-<script setup>
+<script>
 import { ref, onMounted, computed, onUnmounted } from 'vue';
 import { router } from './router';
 import { useStore } from "vuex";
+// import { init } from 'echarts';
+import { useWebSocket } from "@/mixins/useWebSocket";
 
-const sidebarRoutes = ref([]);
-const themeClass = ref(localStorage.getItem('themeClass') || 'theme-red');
-const store = useStore();
-const tasks = computed(() => store.state.activeTasks.tasks);
-const hasActiveTasks = computed(() => store.getters['activeTasks/hasActiveTasks']);
+export default {
+  setup() {
+    const { initSocket, closeSocket } = useWebSocket();
+    const sidebarRoutes = ref([]);
+    const themeClass = ref(localStorage.getItem('themeClass') || 'theme-red');
+    const store = useStore();
+    const tasks = computed(() => store.state.activeTasks.tasks);
+    const hasActiveTasks = computed(() => store.getters['activeTasks/hasActiveTasks']);
 
-const themes = ref([
-  { name: 'theme-red', color: 'red' },
-  { name: 'theme-orange', color: 'orange' },
-  { name: 'theme-green', color: 'green' }
-]);
+    const themes = ref([
+      { name: 'theme-red', color: 'red' },
+      { name: 'theme-orange', color: 'orange' },
+      { name: 'theme-green', color: 'green' }
+    ]);
 
-const changeTheme = (newTheme) => {
-  document.documentElement.classList.remove(themeClass.value);
-  themeClass.value = newTheme;
-  document.documentElement.classList.add(themeClass.value);
-  localStorage.setItem('themeClass', newTheme); // 保存用户选择的主题到本地存储
-};
+    const changeTheme = (newTheme) => {
+      document.documentElement.classList.remove(themeClass.value);
+      themeClass.value = newTheme;
+      document.documentElement.classList.add(themeClass.value);
+      localStorage.setItem('themeClass', newTheme); // 保存用户选择的主题到本地存储
+    };
 
-const handleRouteClick = (path) => {
-  router.push(path);
-};
+    const handleRouteClick = (path) => {
+      router.push(path);
+    };
 
-onMounted(() => {
-  document.documentElement.classList.add(themeClass.value);
+    onMounted(() => {
+      document.documentElement.classList.add(themeClass.value);
+      sidebarRoutes.value = router.options.routes.filter(
+        (route) => !route.meta.hideSidebar
+      );
+      initSocket();
+      store.dispatch("activeTasks/fetchData");
+    });
+    onUnmounted(() => {
+      closeSocket();
+      // store.dispatch("activeTasks/closeSocket");
+    });
 
-  sidebarRoutes.value = router.options.routes.filter(
-    (route) => !route.meta.hideSidebar
-  );
-  store.dispatch("activeTasks/initSocket");
-  store.dispatch("activeTasks/fetchData");
-
-});
-onUnmounted(() => {
-  store.dispatch("activeTasks/closeSocket");
-});
+    return {
+      sidebarRoutes,
+      themeClass,
+      themes,
+      changeTheme,
+      tasks,
+      hasActiveTasks,
+      handleRouteClick
+    };
+  }
+}  
 </script>
 <style lang="scss">
 @import './assets/scss/main.scss';
@@ -253,6 +269,7 @@ onUnmounted(() => {
     transform: rotate(0deg);
     transform: scale(1);
   }
+
   to {
     transform: scale(1.2);
     transform: rotate(360deg);

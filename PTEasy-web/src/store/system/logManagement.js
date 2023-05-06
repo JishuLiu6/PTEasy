@@ -1,5 +1,4 @@
 import GET from '@/api/get';
-import { inject } from "vue";
 
 export default {
   namespaced: true,
@@ -11,7 +10,8 @@ export default {
     socketListeners: [
       {
         event: 'log',
-        mutation: 'addLog',
+        type: 'mutation', // 'mutation' or 'action'
+        name: 'logManagement/addLog',
       }
     ]
   },
@@ -39,15 +39,6 @@ export default {
     },
   },
   actions: {
-    initSocket({ commit, state}) {
-      const socketManager = inject("socketManager");
-      console.log(socketManager, state.socketListeners)
-      socketManager.initListeners(commit, state.socketListeners);
-    },
-    closeSocket({ commit, state}) {
-      const socketManager = inject("socketManager");
-      socketManager.closeListeners(commit, state.socketListeners);
-    },
     async fetchData({ commit, state }) {
       GET.logsList({ page: state.page, size: state.size })
         .then((r) => {
@@ -61,6 +52,9 @@ export default {
     },
   },
   getters: {
-    logs: (state) => state.logs
+    logs: (state) => state.logs,
+    size: (state) => state.size,
+    totalCount: (state) => state.totalCount,
+    socketListeners: (state) => state.socketListeners,
   },
 };

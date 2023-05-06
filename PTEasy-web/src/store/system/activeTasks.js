@@ -12,11 +12,13 @@ export default {
       socketListeners: [
         {
           event: 'task:add',
-          mutation: 'addTask',
+          type: 'mutation', // 'mutation' or 'action'
+          name: 'activeTasks/addTask',
         },
         {
           event: 'task:update',
-          mutation: 'updateTaskStatus',
+          type: 'mutation', // 'mutation' or 'action'
+          name: 'activeTasks/updateTaskStatus',
         }
       ]
     },
@@ -49,14 +51,6 @@ export default {
       }
     },
     actions: {
-      initSocket({ commit, state}) {
-        const socketManager = inject("socketManager");
-        socketManager.initListeners(commit, state.socketListeners);
-      },
-      closeSocket({ commit, state}) {
-        const socketManager = inject("socketManager");
-        socketManager.closeListeners(commit, state.socketListeners);
-      },
       // 从后端获取正在运行的任务数据的逻辑
       async fetchData({ commit, state }) { 
         GET.taskList({ page: state.page, size: state.size }) 

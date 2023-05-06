@@ -49,7 +49,7 @@
 </template>
 
 <script>
-import { ref, computed, onMounted, onUnmounted, inject} from "vue";
+import { ref, computed, onMounted} from "vue";
 import { useStore } from "vuex";
 import helper from "@/mixins/helper.js";
 
@@ -57,23 +57,19 @@ export default {
   mixins: [helper],
   setup() {
     const path = ref("");
-    const socketManager = inject("socketManager");
     const store = useStore();
-    const logs = computed(() => store.state.logManagement.logs);
+    const logs = computed(() => store.state.logManagement.logs)
+    const size = computed(() => store.state.logManagement.size);
+    const totalCount = computed(() => store.state.logManagement.totalCount);
     const page = computed({
       get: () => store.state.logManagement.page,
       set: (value) => (store.state.logManagement.page = value),
     });
-    const size = computed(() => store.state.logManagement.size);
-    const totalCount = computed(() => store.state.logManagement.totalCount);
-    
     
     const isEmpty = ref(false); // 根据实际数据设置是否为空
 
     function sendPathTask(){
-      console.log(path.value)
-      socketManager.sendMessage('path', path.value)
-      // console.log(socketManager)
+      store.dispatch("socketManager/sendMessage",{'event':'path', 'payload': path.value});
     }
 
     function tagType(level) {
@@ -110,14 +106,8 @@ export default {
       page.value = newPage;
       store.dispatch("logManagement/fetchData");
     }
-
     onMounted(() => {
-      store.dispatch("logManagement/initSocket");
       store.dispatch("logManagement/fetchData");
-    });
-
-    onUnmounted(() => {
-      store.dispatch("logManagement/closeSocket");
     });
 
     return {

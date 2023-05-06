@@ -5,3 +5,4 @@ synology_api==0.6.2
 uvicorn[standard]==0.21.1
 PyMySQL==1.0.3
 cryptography==40.0.2
+aiofiles==23.1.0

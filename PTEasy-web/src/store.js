@@ -5,6 +5,7 @@ import getters from '@/store/getters';
 import actions from '@/store/actions';
 import activeTasks from '@/store/system/activeTasks';
 import logManagement from '@/store/system/logManagement';
+import socketManager from '@/store/system/socketManager';
 
 export default createStore({
   state,
@@ -14,5 +15,6 @@ export default createStore({
   modules: {
     activeTasks,
     logManagement,
+    socketManager
   },
 });
